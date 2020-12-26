@@ -6,7 +6,7 @@ using Orleans.Configuration;
 using Orleans.Hosting;
 using System;
 
-namespace Conduit.Services
+namespace Conduit.Infrastructure
 {
     public static class OrleansDependencyInjection
     {

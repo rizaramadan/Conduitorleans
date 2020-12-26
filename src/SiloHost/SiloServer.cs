@@ -1,5 +1,6 @@
 ﻿using GrainInterfaces;
 using Grains.Hello;
+using Grains.Security;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
@@ -43,29 +44,35 @@ namespace SiloHost
         private async Task<ISiloHost> StartSilo()
         {
             var builder = new SiloHostBuilder()
-                .Configure<ClusterOptions>(options =>
-                {
-                    options.ClusterId = Constants.ClusterId;
-                    options.ServiceId = Constants.ServiceId;
-                })
-                .UseAdoNetClustering(options =>
-                {
-                    options.Invariant = invariant;
-                    options.ConnectionString = connStr;
-                })
-                .AddAdoNetGrainStorage(Constants.GrainStorage, options =>
-                {
-                    options.Invariant = invariant;
-                    options.ConnectionString = connStr;
-                    options.UseJsonFormat = true;
-                })
-                .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(HelloGrain).Assembly).WithReferences())
-                .ConfigureEndpoints(siloPort: _siloPort, gatewayPort: _gatewayPort, listenOnAnyHostAddress: true)
-                .ConfigureLogging(logging => logging.AddConsole());
+                .Configure (                 (Action<ClusterOptions>)(options => SetupClusterOptions(options))) 
+                .UseAdoNetClustering (       options => SetupAdoNetClustering(options))
+                .AddAdoNetGrainStorage (     Constants.GrainStorage, options => SetupAdoNetGrainStorage(options))
+                .ConfigureApplicationParts ( parts => parts.AddApplicationPart(typeof(UserGrain).Assembly).WithReferences())
+                .ConfigureEndpoints (        siloPort: _siloPort, gatewayPort: _gatewayPort, listenOnAnyHostAddress: true)
+                .ConfigureLogging (          logging => logging.AddConsole());
 
             var host = builder.Build();
             await host.StartAsync();
             return host;
+        }
+
+        private static void SetupClusterOptions(ClusterOptions options)
+        {
+            options.ClusterId = Constants.ClusterId;
+            options.ServiceId = Constants.ServiceId;
+        }
+
+        private static void SetupAdoNetClustering(AdoNetClusteringSiloOptions options)
+        {
+            options.Invariant = invariant;
+            options.ConnectionString = connStr;
+        }
+
+        private static void SetupAdoNetGrainStorage(AdoNetGrainStorageOptions options)
+        {
+            options.Invariant = invariant;
+            options.ConnectionString = connStr;
+            options.UseJsonFormat = true;
         }
     }
 }

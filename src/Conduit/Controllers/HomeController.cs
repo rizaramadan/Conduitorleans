@@ -1,4 +1,5 @@
 ﻿using GrainInterfaces;
+using GrainInterfaces.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace Conduit.Controllers
 {
-    [ApiController]
     [Route("[controller]")]
+    [ApiController]
     public class HomeController : ControllerBase
     {
         private readonly ILogger<HomeController> _logger;

@@ -22,4 +22,8 @@
     <ProjectReference Include="..\GrainInterfaces\GrainInterfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Outputs\" />
+  </ItemGroup>
+
 </Project>

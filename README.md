@@ -10,3 +10,8 @@ to have this up and running, steps are as follow:
 3. build the solution
 4. start [/src/SiloHost](https://github.com/rizaramadan/Conduitorleans/tree/main/src/SiloHost) project first, after its up and running
 5. start the [/src/Conduit](https://github.com/rizaramadan/Conduitorleans/tree/main/src/Conduit)
+
+
+### Footnote
+Copy many codes from [an awesome conduit implementation using ASP.NET Core](https://github.com/gothinkster/aspnetcore-realworld-example-app).
+Please check that repository, many things done right and much to learn from it.

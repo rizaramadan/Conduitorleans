@@ -1,4 +1,4 @@
-using Conduit.Services;
+using Conduit.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +26,8 @@ namespace Conduit
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Conduitorleans", Version = "v1" });
             });
+
+            services.AddJwt();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
