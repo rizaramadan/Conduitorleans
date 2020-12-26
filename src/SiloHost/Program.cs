@@ -1,12 +1,21 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 
 namespace SiloHost
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            int? siloPort = null;
+            if (args.Length > 0 && int.TryParse(args[0], out var siloPortArg))
+                siloPort = siloPortArg;
+
+            int? gatewayPort = null;
+            if (args.Length > 1 && int.TryParse(args[1], out var gatewayPortArg))
+                siloPort = gatewayPortArg;
+
+            var server = new SiloServer();
+            return await server.Start(siloPort, gatewayPort);
         }
     }
 }
