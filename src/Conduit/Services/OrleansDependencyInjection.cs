@@ -11,7 +11,7 @@ namespace Conduit.Services
     public static class OrleansDependencyInjection
     {
         const string invariant = "Npgsql";
-        const string connStr = "Host=localhost;Port=5432;Database=orleans_basic;Username=postgres;Password=mainmain;Application Name=orleans_basic_web_client";
+        const string connStr = "Host=localhost;Port=5432;Database=conduitorleans;Username=postgres;Password=mainmain;Application Name=conduitorleans";
         
         public static void AddOrleansClusterClient(this IServiceCollection service) 
         {

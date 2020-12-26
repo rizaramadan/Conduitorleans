@@ -20,6 +20,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiloHost", "src\SiloHost\Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conduit", "src\Conduit\Conduit.csproj", "{9EFDF0C9-C2A3-46D6-A2BA-6B257F2CF633}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{2B9FE553-1903-48EC-9284-EC7C421E0F37}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\conduitorelans.sql = scripts\conduitorelans.sql
+		scripts\README.md = scripts\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +93,7 @@ Global
 		{A11E93A4-D151-4B7F-8A07-68ED642C5972} = {524FAAEB-CA54-4A2F-ACFB-E966F62545ED}
 		{73D08779-90C9-40F1-A2FF-0D7BC9F1C473} = {524FAAEB-CA54-4A2F-ACFB-E966F62545ED}
 		{9EFDF0C9-C2A3-46D6-A2BA-6B257F2CF633} = {524FAAEB-CA54-4A2F-ACFB-E966F62545ED}
+		{2B9FE553-1903-48EC-9284-EC7C421E0F37} = {1DD30722-5A57-4C1A-9F7C-4C34838AC50B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08B8AC0D-B766-4768-A626-8A57A29B9694}
