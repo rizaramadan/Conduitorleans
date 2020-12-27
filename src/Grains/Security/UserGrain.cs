@@ -50,7 +50,7 @@ namespace Grains.Security
             if (hasRegistered)
                 return new UserRegisteredError();
             _userState.State.Email = email;
-            var passwordHasher = _factory.GetGrain<IPasswordHasher>(nameof(IPasswordHasher));
+            var passwordHasher = _factory.GetGrain<IPasswordHasher>(0);
             _userState.State.Salt = Guid.NewGuid();
             _userState.State.Password = await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
             await _userState.WriteStateAsync();

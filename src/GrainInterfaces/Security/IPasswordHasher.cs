@@ -6,7 +6,7 @@ using Orleans;
 
 namespace GrainInterfaces.Security
 {
-    public interface IPasswordHasher : IGrainWithStringKey
+    public interface IPasswordHasher : IGrainWithIntegerKey
     {
         Task<byte[]> Hash(string password, byte[] salt);
     }

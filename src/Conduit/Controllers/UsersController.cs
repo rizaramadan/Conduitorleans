@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using GrainInterfaces.Security;
 using GrainInterfaces;
 using Conduit.Models.Outputs;
+using Conduit.Infrastructure.Security;
 
 namespace Conduit.Controllers
 {
@@ -19,11 +20,13 @@ namespace Conduit.Controllers
     {
         private readonly ILogger<UsersController> _logger;
         private readonly IClusterClient _client;
+        private readonly IJwtTokenGenerator _tokenGenerator;
 
-        public UsersController(ILogger<UsersController> logger, IClusterClient c)
+        public UsersController(ILogger<UsersController> logger, IClusterClient c, IJwtTokenGenerator g)
         {
             _logger = logger;
             _client = c;
+            _tokenGenerator = g;
         }
 
         [HttpPost]
@@ -39,7 +42,7 @@ namespace Conduit.Controllers
                 register.Email,
                 "some bio",
                 "some image",
-                "some token"
+                await _tokenGenerator.CreateToken(user.GetPrimaryKeyString())
             ));
         }
     }

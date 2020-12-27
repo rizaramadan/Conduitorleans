@@ -1,5 +1,6 @@
 ﻿using GrainInterfaces;
 using GrainInterfaces.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Conduit.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class HomeController : ControllerBase

@@ -10,7 +10,7 @@ namespace Grains.Security
 {
     [StatelessWorker]
     [Reentrant]
-    class PasswordHasher : Grain, IPasswordHasher
+    public class PasswordHasher : Grain, IPasswordHasher
     {
         private static readonly HMACSHA512 x = new HMACSHA512(Encoding.UTF8.GetBytes("Conduitorleans"));
 
