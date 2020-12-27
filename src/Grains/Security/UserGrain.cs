@@ -18,7 +18,7 @@ namespace Grains.Security
         private static readonly HMACSHA512 x = new HMACSHA512(Encoding.UTF8.GetBytes("Conduitorleans"));
         private readonly IPersistentState<UserState> _userState;
         private readonly ILogger<UserGrain> _l;
-        //private readonly IGrainFactory _factory;
+        private readonly IGrainFactory _factory;
 
         public UserGrain(
             [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<UserState> s,
@@ -29,7 +29,7 @@ namespace Grains.Security
         {
             _userState = s;
             _l = l;
-            //_factory = f;
+            _factory = f;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Grains.Security
         /// <returns></returns>
         public async Task<(bool, IError)> HasRegistered()
         {
-            var result = await Task.FromResult(!string.IsNullOrWhiteSpace(_userState.State.Password));
+            var result = await Task.FromResult(_userState.State.Password != null && _userState.State.Password.Length > 0);
             return (result, Error.None);
         }
 
@@ -50,24 +50,11 @@ namespace Grains.Security
             if (hasRegistered)
                 return new UserRegisteredError();
             _userState.State.Email = email;
-            //var passwordHasher = _factory.GetGrain<IPasswordHasher>(string.Empty);
+            var passwordHasher = _factory.GetGrain<IPasswordHasher>(nameof(IPasswordHasher));
             _userState.State.Salt = Guid.NewGuid();
-            _userState.State.Password = Convert.ToBase64String(await Hash(password, _userState.State.Salt.ToByteArray()));
+            _userState.State.Password = await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
             await _userState.WriteStateAsync();
             return Error.None;
         }
-
-        private async Task<byte[]> Hash(string password, byte[] salt)
-        {
-            var bytes = Encoding.UTF8.GetBytes(password);
-
-            var allBytes = new byte[bytes.Length + salt.Length];
-            Buffer.BlockCopy(bytes, 0, allBytes, 0, bytes.Length);
-            Buffer.BlockCopy(salt, 0, allBytes, bytes.Length, salt.Length);
-
-            return await Task.FromResult(x.ComputeHash(allBytes));
-        }
     }
-
-    
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GrainInterfaces.Security;
 using GrainInterfaces;
+using Conduit.Models.Outputs;
 
 namespace Conduit.Controllers
 {
@@ -33,11 +34,13 @@ namespace Conduit.Controllers
             var error = await user.Register(register.Email, register.Password);
             if (error.Exist())
                 return new JsonResult(error);
-            return new JsonResult(new
-            {
-                username = user.GetPrimaryKeyString(),
-                email = register.Email
-            }); 
+            return new JsonResult(new RegisterUserOutput(
+                user.GetPrimaryKeyString(),
+                register.Email,
+                "some bio",
+                "some image",
+                "some token"
+            ));
         }
     }
 }

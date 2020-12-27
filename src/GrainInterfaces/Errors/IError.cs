@@ -25,6 +25,6 @@ namespace GrainInterfaces
 
     public static class IErrorExtension
     {
-        public static bool Exist(this IError error) => error != Error.None;
+        public static bool Exist(this IError error) => !error.Equals(Error.None);
     }
 }
