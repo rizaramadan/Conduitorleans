@@ -8,8 +8,12 @@ To make the database ready:
 - install postgresql version 12 or newer on localhost
 - have the database listen at ip localhost and port 5432
 - create database with name **conduitorleans** (lowercase)
-- execute conduitorleans.sql for that database
+- execute conduitorleans_all.sql for that database
 - done
+
+
+#### Update
+
 
 #### footnote
 The database structure here is slightly different compare to the Orleans default,
