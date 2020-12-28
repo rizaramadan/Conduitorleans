@@ -5,6 +5,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Conduit.Infrastructure.Security;
+using GrainInterfaces.Services;
 
 namespace Conduit.Infrastructure
 {
@@ -63,6 +64,7 @@ namespace Conduit.Infrastructure
                 });
 
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddTransient<IUserService, UserService>();
         }
     }
 }

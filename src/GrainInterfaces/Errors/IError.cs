@@ -12,10 +12,25 @@ namespace GrainInterfaces
 
     public class Error : IError
     {
-        public static readonly Error None = new Error();
+        public static readonly Error None = new Error(Guid.Empty, nameof(None));
 
-        public Guid Code { get => Guid.Empty; }
-        public string Message { get => nameof(None); }
+        public Error(Guid code, string message) 
+        {
+            Code = code;
+            Message = message;
+        }
+
+        public Error(string code, string message)
+        {
+            if (Guid.TryParse(code, out var codeGuid))
+                Code = codeGuid;
+            else
+                throw new InvalidCastException();
+            Message = message;
+        }
+
+        public Guid Code { get; }
+        public string Message { get; }
 
         public override bool Equals(object obj) =>
             obj is IError error && Code.Equals(error.Code);

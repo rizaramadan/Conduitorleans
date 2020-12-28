@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 
 namespace Conduit.Models.Inputs
 {
-    public class RegisterWrapper
+    public class LoginWrapper
     {
-        public Register User { get; set; }
+        public Login User { get; set; }
     }
 
-    public class Register
+    public class Login
     {
-        public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }

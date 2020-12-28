@@ -10,5 +10,9 @@ namespace GrainInterfaces.Security
     {
         Task<(bool, IError)> HasRegistered();
         Task<IError> Register(string email, string password);
+        Task<IError> Login(string email, string password);
     }
+
+
+
 }

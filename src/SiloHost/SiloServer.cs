@@ -13,9 +13,10 @@ namespace SiloHost
     public class SiloServer
     {
         const string invariant = "Npgsql";
-        const string connStr = "Host=localhost;Port=5432;Database=conduitorleans;Username=postgres;Password=mainmain;Application Name=conduitorleans";
-
+        const string connStr = Constants.ConnStr;
         
+
+
         const int defaultSiloPort = 11111;
         const int defaultGatewayPort = 30000;
 
