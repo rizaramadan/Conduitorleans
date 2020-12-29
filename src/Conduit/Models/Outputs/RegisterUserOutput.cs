@@ -20,10 +20,10 @@ namespace Conduit.Models.Outputs
             user = new User 
             { 
                 username = username, 
-                email = email, 
-                bio = bio, 
-                image = image, 
-                token = token 
+                email    = email, 
+                bio      = bio, 
+                image    = image, 
+                token    = token 
             };
         }
     }
@@ -35,16 +35,5 @@ namespace Conduit.Models.Outputs
         public string bio { get; set; }
         public string image { get; set; }
         public string token { get; set; }
-    }
-
-    public class LoginUserOutput : RegisterUserOutput 
-    {
-        public LoginUserOutput(
-            string username,
-            string email,
-            string bio,
-            string image,
-            string token
-        ) : base(username, email, bio, image, token) { }
     }
 }

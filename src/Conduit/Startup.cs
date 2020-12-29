@@ -22,7 +22,7 @@ namespace Conduit
         {
             services.AddOrleansClusterClient();
             services.AddJwt();
-            services.AddControllers();
+            services.AddWebApiInfrastructure();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Conduitorleans", Version = "v1" });

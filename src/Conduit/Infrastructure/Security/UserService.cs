@@ -24,7 +24,7 @@ namespace Conduit.Infrastructure.Security
             var param = "@p";
             var id = string.Empty;
             //TODO: below line is also too long
-            await using (var cmd = new NpgsqlCommand($"select {idColumn} from {table} where {emailColumn} = {param} and {additionalFilter} ;", conn))
+            await using (var cmd = new NpgsqlCommand($"SELECT {idColumn} FROM {table} WHERE {emailColumn} = {param} AND {additionalFilter} LIMIT 1;", conn))
             {
                 cmd.Parameters.AddWithValue(param, email);
                 await using (var reader = await cmd.ExecuteReaderAsync())

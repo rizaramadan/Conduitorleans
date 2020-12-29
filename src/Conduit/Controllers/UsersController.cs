@@ -1,4 +1,4 @@
-﻿using Conduit.Models.Inputs;
+﻿ using Conduit.Models.Inputs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -35,6 +35,8 @@ namespace Conduit.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RegisterWrapper wrapper)
         {
+            if (!ModelState.IsValid)
+                return new JsonResult(new Error("489523e8-f33d-478f-a6f8-b54d9fe7fae3", "invalid request"));
             var register = wrapper.User;
             var user = _client.GetGrain<IUserGrain>(register.Username);
             var error = await user.Register(register.Email, register.Password);
