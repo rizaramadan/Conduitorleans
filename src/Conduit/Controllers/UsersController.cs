@@ -33,40 +33,36 @@ namespace Conduit.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RegisterWrapper wrapper)
+        public async Task<IActionResult> Create([FromBody] RegisterWrapper r)
         {
-            if (!ModelState.IsValid)
-                return new JsonResult(new Error("489523e8-f33d-478f-a6f8-b54d9fe7fae3", "invalid request"));
-            var register = wrapper.User;
-            var user = _client.GetGrain<IUserGrain>(register.Username);
-            var error = await user.Register(register.Email, register.Password);
+            var user = _client.GetGrain<IUserGrain>(r.User.Username);
+            var error = await user.Register(r.User.Email, r.User.Password);
             if (error.Exist())
                 return new JsonResult(error);
             return new JsonResult(new RegisterUserOutput(
                 user.GetPrimaryKeyString(),
-                register.Email,
+                r.User.Email,
                 //TODO: update bio feature
                 "some bio",
                 //TODO: update image feature
                 "some image",
                 await _tokenGenerator.CreateToken(user.GetPrimaryKeyString())
             ));
-        }
+        } 
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginWrapper wrapper)
+        public async Task<IActionResult> Login([FromBody] LoginWrapper l)
         {
-            var login = wrapper.User;
-            var (userId, error) = await _userService.GetUsernameByEmail(login.Email);
+            var (userId, error) = await _userService.GetUsernameByEmail(l.User.Email);
             if (error.Exist())
                 return new JsonResult(error);
             var user = _client.GetGrain<IUserGrain>(userId);
-            var errorLogin = await user.Login(login.Email, login.Password);
+            var errorLogin = await user.Login(l.User.Email, l.User.Password);
             if (errorLogin.Exist())
                 return new JsonResult(errorLogin);
             return new JsonResult(new LoginUserOutput(
                 user.GetPrimaryKeyString(),
-                login.Email,
+                l.User.Email,
                 //TODO: update bio feature
                 "some bio",
                 //TODO: update image feature

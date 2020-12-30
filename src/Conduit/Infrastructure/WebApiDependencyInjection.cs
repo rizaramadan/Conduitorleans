@@ -14,10 +14,7 @@ namespace Conduit.Infrastructure
         {
             services.AddControllers();
             services.AddCors();
-            services.AddMvc(opt => 
-            {
-                opt.Filters.Add(typeof(ValidatorActionFilter));
-            })
+            services.AddMvc()
             .AddFluentValidation(cfg =>
             {
                 cfg.RegisterValidatorsFromAssemblyContaining<Startup>();
