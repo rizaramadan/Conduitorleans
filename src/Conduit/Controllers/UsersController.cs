@@ -19,14 +19,12 @@ namespace Conduit.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
         private readonly IClusterClient _client;
         private readonly IJwtTokenGenerator _tokenGenerator;
         private readonly IUserService _userService;
 
-        public UsersController(ILogger<UsersController> logger, IClusterClient c, IJwtTokenGenerator g, IUserService s)
+        public UsersController(IClusterClient c, IJwtTokenGenerator g, IUserService s)
         {
-            _logger = logger;
             _client = c;
             _tokenGenerator = g;
             _userService = s;
@@ -38,7 +36,10 @@ namespace Conduit.Controllers
             var user = _client.GetGrain<IUserGrain>(r.User.Username);
             var error = await user.Register(r.User.Email, r.User.Password);
             if (error.Exist())
+            {
                 return new JsonResult(error);
+            }
+
             return new JsonResult(new RegisterUserOutput(
                 user.GetPrimaryKeyString(),
                 r.User.Email,
@@ -55,11 +56,17 @@ namespace Conduit.Controllers
         {
             var (userId, error) = await _userService.GetUsernameByEmail(l.User.Email);
             if (error.Exist())
+            {
                 return new JsonResult(error);
+            }
+
             var user = _client.GetGrain<IUserGrain>(userId);
             var errorLogin = await user.Login(l.User.Email, l.User.Password);
             if (errorLogin.Exist())
+            {
                 return new JsonResult(errorLogin);
+            }
+
             return new JsonResult(new LoginUserOutput(
                 user.GetPrimaryKeyString(),
                 l.User.Email,

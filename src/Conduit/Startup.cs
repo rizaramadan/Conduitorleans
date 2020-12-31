@@ -39,6 +39,12 @@ namespace Conduit
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conduitorleans v1"));
             }
 
+            app.UseCors(builder =>
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();

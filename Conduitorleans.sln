@@ -6,19 +6,20 @@ MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1DD30722-5A57-4C1A-9F7C-4C34838AC50B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.editorconfig.inferred = .editorconfig.inferred
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{524FAAEB-CA54-4A2F-ACFB-E966F62545ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainInterfaces", "src\GrainInterfaces\GrainInterfaces.csproj", "{C43BF8FB-CDED-4556-B798-3555A94C7032}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrainInterfaces", "src\GrainInterfaces\GrainInterfaces.csproj", "{C43BF8FB-CDED-4556-B798-3555A94C7032}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains", "src\Grains\Grains.csproj", "{A11E93A4-D151-4B7F-8A07-68ED642C5972}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains", "src\Grains\Grains.csproj", "{A11E93A4-D151-4B7F-8A07-68ED642C5972}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiloHost", "src\SiloHost\SiloHost.csproj", "{73D08779-90C9-40F1-A2FF-0D7BC9F1C473}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SiloHost", "src\SiloHost\SiloHost.csproj", "{73D08779-90C9-40F1-A2FF-0D7BC9F1C473}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conduit", "src\Conduit\Conduit.csproj", "{9EFDF0C9-C2A3-46D6-A2BA-6B257F2CF633}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Conduit", "src\Conduit\Conduit.csproj", "{9EFDF0C9-C2A3-46D6-A2BA-6B257F2CF633}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{2B9FE553-1903-48EC-9284-EC7C421E0F37}"
 	ProjectSection(SolutionItems) = preProject
