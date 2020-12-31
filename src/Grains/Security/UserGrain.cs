@@ -16,7 +16,6 @@ namespace Grains.Security
 {
     public class UserGrain : Grain, IUserGrain
     {
-        
         public static readonly IError UnregisteredUserLogin =
             new Error("d7a011a1-3f86-4797-b6ef-210b4b041121", "login of unregistered user");
 
@@ -43,8 +42,7 @@ namespace Grains.Security
         {
             var result = await Task.FromResult
             (
-                _userState.State.Password != null && 
-                _userState.State.Password.Length > 0
+                _userState.State.Password?.Length > 0
             );
             return (result, Error.None);
         }
@@ -98,6 +96,11 @@ namespace Grains.Security
                 await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
             await _userState.WriteStateAsync();
             return Error.None;
+        }
+
+        public async Task<(string, IError)> GetEmail()
+        {
+            return await Task.FromResult((_userState.State.Email, Error.None));
         }
     }
 }
