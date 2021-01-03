@@ -1,4 +1,4 @@
-﻿ using Conduit.Models.Inputs;
+﻿ using Conduit.Features.Users.Inputs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -7,16 +7,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GrainInterfaces.Security;
-using GrainInterfaces;
-using Conduit.Models.Outputs;
+using Contracts.Security;
+using Contracts;
+using Conduit.Features.Users.Outputs;
 using Conduit.Infrastructure.Security;
-using GrainInterfaces.Services;
+using Contracts.Users;
 
-namespace Conduit.Controllers
+namespace Conduit.Features.Users
 {
     [Route("[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class UsersController : ControllerBase
     {
         private readonly IClusterClient _client;
@@ -37,10 +38,10 @@ namespace Conduit.Controllers
             var error = await user.Register(r.User.Email, r.User.Password);
             if (error.Exist())
             {
-                return new JsonResult(error);
+                return UnprocessableEntity(error);
             }
 
-            return new JsonResult(new RegisterUserOutput(
+            return Ok(new RegisterUserOutput(
                 user.GetPrimaryKeyString(),
                 r.User.Email,
                 //TODO: update bio feature
@@ -57,17 +58,17 @@ namespace Conduit.Controllers
             var (userId, error) = await _userService.GetUsernameByEmail(l.User.Email);
             if (error.Exist())
             {
-                return new JsonResult(error);
+                return UnprocessableEntity(error);
             }
 
             var user = _client.GetGrain<IUserGrain>(userId);
             var errorLogin = await user.Login(l.User.Email, l.User.Password);
             if (errorLogin.Exist())
             {
-                return new JsonResult(errorLogin);
+                return UnprocessableEntity(errorLogin);
             }
 
-            return new JsonResult(new LoginUserOutput(
+            return Ok(new LoginUserOutput(
                 user.GetPrimaryKeyString(),
                 l.User.Email,
                 //TODO: update bio feature

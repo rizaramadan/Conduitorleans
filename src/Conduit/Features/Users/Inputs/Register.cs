@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Conduit.Models.Inputs
+namespace Conduit.Features.Users.Inputs
 {
     public class RegisterWrapper
     {

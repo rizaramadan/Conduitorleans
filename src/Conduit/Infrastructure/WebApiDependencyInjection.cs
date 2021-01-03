@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Conduit.Infrastructure
@@ -12,13 +13,18 @@ namespace Conduit.Infrastructure
     {
         public static void AddWebApiInfrastructure(this IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
             services.AddCors();
             services.AddMvc()
-            .AddFluentValidation(cfg =>
-            {
-                cfg.RegisterValidatorsFromAssemblyContaining<Startup>();
-            });
+                .AddFeatureFolders()
+                .AddFluentValidation(cfg =>
+                {
+                    cfg.RegisterValidatorsFromAssemblyContaining<Startup>();
+                });
         }
     }
 }

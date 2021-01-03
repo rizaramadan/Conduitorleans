@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Conduit.Models.Outputs
+namespace Conduit.Features.Users.Outputs
 {
     public class LoginUserOutput : RegisterUserOutput
     {

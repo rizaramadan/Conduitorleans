@@ -1,4 +1,4 @@
-﻿using GrainInterfaces.Security;
+﻿using Contracts.Security;
 using Orleans;
 using Orleans.Concurrency;
 using System;

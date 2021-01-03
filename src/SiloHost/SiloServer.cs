@@ -1,4 +1,4 @@
-﻿using GrainInterfaces;
+﻿using Contracts;
 using Grains.Hello;
 using Grains.Security;
 using Microsoft.Extensions.Logging;
@@ -12,13 +12,11 @@ namespace SiloHost
 {
     public class SiloServer
     {
-        const string invariant = "Npgsql";
-        const string connStr = Constants.ConnStr;
-        
+        public const string invariant = "Npgsql";
+        public const string connStr = Constants.ConnStr;
 
-
-        const int defaultSiloPort = 11111;
-        const int defaultGatewayPort = 30000;
+        public const int defaultSiloPort = 11111;
+        public const int defaultGatewayPort = 30000;
 
         private int _siloPort;
         private int _gatewayPort;
@@ -45,7 +43,7 @@ namespace SiloHost
         private async Task<ISiloHost> StartSilo()
         {
             var builder = new SiloHostBuilder()
-                .Configure (                 (Action<ClusterOptions>)(options => SetupClusterOptions(options))) 
+                .Configure (                 (Action<ClusterOptions>)(options => SetupClusterOptions(options)))
                 .UseAdoNetClustering (       options => SetupAdoNetClustering(options))
                 .AddAdoNetGrainStorage (     Constants.GrainStorage, options => SetupAdoNetGrainStorage(options))
                 .ConfigureApplicationParts ( parts => parts.AddApplicationPart(typeof(UserGrain).Assembly).WithReferences())

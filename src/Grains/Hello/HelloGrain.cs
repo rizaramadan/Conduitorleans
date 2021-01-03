@@ -1,4 +1,4 @@
-﻿using GrainInterfaces;
+﻿using Contracts;
 using Orleans;
 using Orleans.Runtime;
 using System;

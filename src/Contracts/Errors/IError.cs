@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GrainInterfaces
+namespace Contracts
 {
     public interface IError
     {
@@ -14,7 +14,7 @@ namespace GrainInterfaces
     {
         public static readonly Error None = new Error(Guid.Empty, nameof(None));
 
-        public Error(Guid code, string message) 
+        public Error(Guid code, string message)
         {
             Code = code;
             Message = message;
@@ -22,10 +22,9 @@ namespace GrainInterfaces
 
         public Error(string code, string message)
         {
-            if (Guid.TryParse(code, out var codeGuid))
-                Code = codeGuid;
-            else
-                throw new InvalidCastException();
+            Code = Guid.TryParse(code, out var codeGuid)
+                ? codeGuid
+                : throw new InvalidCastException();
             Message = message;
         }
 

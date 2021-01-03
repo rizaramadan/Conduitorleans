@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Orleans;
 
-namespace GrainInterfaces.Security
+namespace Contracts.Users
 {
     public interface IUserGrain : IGrainWithStringKey
     {

@@ -1,5 +1,5 @@
-﻿using GrainInterfaces;
-using GrainInterfaces.Services;
+﻿using Contracts;
+using Contracts.Users;
 using Microsoft.AspNetCore.Http;
 using Npgsql;
 using System;
@@ -13,10 +13,14 @@ namespace Conduit.Infrastructure.Security
     public class UserService : IUserService
     {
         const string connStr = Constants.ConnStr;
-        const string table = "orleansstorage";
-        const string idColumn = "grainidextensionstring";
-        const string emailColumn = "payloadjson->>'Email'";
-        const string additionalFilter = "graintypestring = 'Grains.Security.UserGrain,Grains.UserGrain'";
+        private const string Query =
+            @"
+                SELECT grainidextensionstring FROM orleansstorage 
+                WHERE payloadjson->>'Email' = @email
+                    AND graintypestring = 'Grains.Security.UserGrain,Grains.UserGrain'
+                LIMIT 1;
+            ";
+        private const string EmailParam = "@email";
 
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -31,12 +35,10 @@ namespace Conduit.Infrastructure.Security
             await using var conn = new NpgsqlConnection(connStr);
             await conn.OpenAsync();
 
-            var param = "@p";
             var id = string.Empty;
-            //TODO: below line is also too long
-            await using (var cmd = new NpgsqlCommand($"SELECT {idColumn} FROM {table} WHERE {emailColumn} = {param} AND {additionalFilter} LIMIT 1;", conn))
+            await using (var cmd = new NpgsqlCommand(Query, conn))
             {
-                cmd.Parameters.AddWithValue(param, email);
+                cmd.Parameters.AddWithValue(EmailParam, email);
                 await using var reader = await cmd.ExecuteReaderAsync();
                 if (await reader.ReadAsync())
                 {
@@ -45,7 +47,7 @@ namespace Conduit.Infrastructure.Security
             }
             if (string.IsNullOrWhiteSpace(id))
             {
-                return (null, new Error("07d9496e-d7fa-436b-8bf5-ce6c37a70c38", $"user of {email} not found"));
+                return (null, new Error("07d9496e-d7fa-436b-8bf5-ce6c37a70c38", $"{email} not found"));
             }
             else
             {

@@ -1,7 +1,7 @@
 ﻿using Orleans;
 using System.Threading.Tasks;
 
-namespace GrainInterfaces
+namespace Contracts
 {
     public interface IHello : IGrainWithIntegerKey
     {
