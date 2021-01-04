@@ -19,40 +19,46 @@ namespace Conduit.Features.Articles
     [Produces("application/json")]
     public class ArticlesController : ControllerBase
     {
-        private static readonly Error UserIdError =
-            new Error("214630de-9fb8-4539-bbf6-738166078742", "userid not valid");
-
         private readonly IClusterClient _client;
         private readonly IUserService _userService;
         public ArticlesController(IClusterClient c, IUserService u)
         {
             _client = c;
+            _userService = u;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(GetArticlesInput input)
-        {
-            return await  Task.FromResult(Ok(new ArticlesOutput())) ;
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> Get(GetArticlesInput input)
+        //{
+        //    return await Task.FromResult(Ok(new ArticlesOutput())) ;
+        //}
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(CreateArticle input) 
+        public async Task<IActionResult> Create(CreateArticleInput input) 
         {
             var (userId, error) = _userService.GetCurrentUsername();
             if (error.Exist()) 
             {
                 return UnprocessableEntity(error);
             }
-            if (long.TryParse(userId, out var userIdLong))
+            /// The key of article is compound of long and string. 
+            /// integer is filled with yyyyMMddHHmmss parse as long
+            /// string is filled with creator's userId as string
+            /// this means a user can only create one article per second
+            /// its still a reasonable limitation
+            var key = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss"));
+            var article = _client.GetGrain<IArticleGrain>(key, userId);
+            error = await article.CreateArticle(input);
+            if (error.Exist())
             {
-                //WIP
-                return Ok();
+                return UnprocessableEntity(error);
             }
             else 
             {
-                return UnprocessableEntity(UserIdError);
+                return Ok(new CreateArticleOutput { Article = input });
             }
+
         }
     }
 }
