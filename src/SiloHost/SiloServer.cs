@@ -1,6 +1,5 @@
 ﻿using Contracts;
-using Grains.Hello;
-using Grains.Security;
+using Grains.Users;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;

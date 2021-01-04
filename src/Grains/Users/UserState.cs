@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Contracts.Users;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Grains.Security
+namespace Grains.Users
 {
     [Serializable]
-    public class UserState
+    public class UserState : IUser
     {
         public string Email { get; set; }
         public byte[] Password { get; set; }

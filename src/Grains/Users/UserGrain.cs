@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Runtime;
 
-namespace Grains.Security
+namespace Grains.Users
 {
     public class UserGrain : Grain, IUserGrain
     {
