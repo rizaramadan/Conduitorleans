@@ -14,7 +14,7 @@ using Contracts;
 
 namespace Conduit.Features.Articles
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     [Produces("application/json")]
     public class ArticlesController : ControllerBase
@@ -37,7 +37,7 @@ namespace Conduit.Features.Articles
         [HttpPost]
         public async Task<IActionResult> Create(CreateArticleInput input) 
         {
-            var (userId, error) = _userService.GetCurrentUsername();
+            var (username, error) = _userService.GetCurrentUsername();
             if (error.Exist()) 
             {
                 return UnprocessableEntity(error);
@@ -48,15 +48,15 @@ namespace Conduit.Features.Articles
             /// this means a user can only create one article per second
             /// its still a reasonable limitation
             var key = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss"));
-            var article = _client.GetGrain<IArticleGrain>(key, userId);
-            error = await article.CreateArticle(input);
+            var article = _client.GetGrain<IArticleGrain>(key, username);
+            error = await article.CreateArticle(input.Article);
             if (error.Exist())
             {
                 return UnprocessableEntity(error);
             }
             else 
             {
-                return Ok(new CreateArticleOutput { Article = input });
+                return Ok(new CreateArticleOutput { Article = input.Article });
             }
 
         }

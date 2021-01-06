@@ -26,6 +26,7 @@
 
         public async Task<IError> CreateArticle(IArticle article)
         {
+            this.GetPrimaryKeyLong(out var username);
             _article.State.Title = article.Title;
             _article.State.Slug = article.Slug;
             _article.State.Body = article.Body;
@@ -33,7 +34,7 @@
             _article.State.UpdatedAt = _article.State.CreatedAt;
             _article.State.Description = article.Description;
             _article.State.TagList = article.TagList;
-            _article.State.Author = article.Author;
+            _article.State.Author = username;
             _article.State.Favorited = new List<IUser>(0);
             _article.State.FavoritesCount = 0;
             await _article.WriteStateAsync();

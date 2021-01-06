@@ -17,7 +17,7 @@ namespace Conduit.Infrastructure.Security
             @"
                 SELECT grainidextensionstring FROM orleansstorage 
                 WHERE payloadjson->>'Email' = @email
-                    AND graintypestring = 'Grains.Security.UserGrain,Grains.UserGrain'
+                    AND graintypestring = 'Grains.Users.UserGrain,Grains.UserGrain'
                 LIMIT 1;
             ";
         private const string EmailParam = "@email";
