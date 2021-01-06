@@ -798,7 +798,7 @@ ALTER TABLE ONLY public.orleansreminderstable
 
 CREATE INDEX ix_orleansstorage ON public.orleansstorage USING btree (grainidhash, graintypehash);
 
-CREATE INDEX user_details ON orleansstorage ((payloadjson->>'Email')) WHERE graintypestring = 'Grains.Security.UserGrain,Grains.UserGrain';
+CREATE INDEX user_details ON orleansstorage ((payloadjson->>'Email')) WHERE graintypestring = 'Grains.Users.UserGrain,Grains.UserGrain';
 
 
 --

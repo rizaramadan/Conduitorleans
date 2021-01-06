@@ -55,7 +55,7 @@ namespace Conduit.Infrastructure.Security
             }
         }
 
-        public (string, IError) GetCurrentUsername()
+        public (string Username, IError Error) GetCurrentUsername()
         {
             return
             (

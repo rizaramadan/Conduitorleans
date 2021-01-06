@@ -6,6 +6,6 @@ namespace Contracts.Users
     {
         Task<(string, IError)> GetUsernameByEmail(string email);
 
-        (string, IError) GetCurrentUsername();
+        (string Username, IError Error) GetCurrentUsername();
     }
 }

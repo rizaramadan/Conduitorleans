@@ -1,6 +1,7 @@
 ﻿namespace Conduit.Features.Articles.Inputs
 {
     using Contracts.Articles;
+    using Contracts.Users;
     using FluentValidation;
     using System;
     using System.Collections.Generic;
@@ -17,7 +18,7 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string Author { get; set; }
-        public List<IArticleFavorited> Favorited { get; set; }
+        public List<IUser> Favorited { get; set; }
         public int FavoritesCount { get; set; }
         List<string> IArticle.TagList { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.Users;
+using System;
 using System.Collections.Generic;
 
 namespace Contracts.Articles
@@ -13,7 +14,7 @@ namespace Contracts.Articles
         string Description { get; set; }
         List<string> TagList { get; set; }
         string Author { get; set; }
-        List<IArticleFavorited> Favorited { get; set; }
+        List<IUser> Favorited { get; set; }
         int FavoritesCount { get; set; }
     }
 }
