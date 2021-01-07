@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{2B9F
 		scripts\00_conduitorleans.sql = scripts\00_conduitorleans.sql
 		scripts\01_adding_index.sql = scripts\01_adding_index.sql
 		scripts\02_changing_index.sql = scripts\02_changing_index.sql
+		scripts\03_adding_articles_index.sql = scripts\03_adding_articles_index.sql
 		scripts\conduitorleans_all.sql = scripts\conduitorleans_all.sql
 		scripts\README.md = scripts\README.md
 	EndProjectSection
