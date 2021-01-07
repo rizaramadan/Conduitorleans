@@ -7,6 +7,7 @@
     [Serializable]
     public class TagState
     {
-        public HashSet<long> ArticleIds { get; set; }
+        public HashSet<string> ArticleIds { get; set; }
+        public TagState() => ArticleIds = new HashSet<string>();
     }
 }

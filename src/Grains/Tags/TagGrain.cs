@@ -1,6 +1,7 @@
 ﻿namespace Grains.Tags
 {
     using Contracts;
+    using Contracts.Articles;
     using Contracts.Tags;
     using Orleans;
     using Orleans.Runtime;
@@ -22,17 +23,14 @@
         {
             _tagState = s;
             _factory = f;
-            if (_tagState.State.ArticleIds == null)
-            {
-                _tagState.State.ArticleIds = new HashSet<long>();
-            }
         }
 
-        public async Task<Error> AddArticle(long articleId)
+        public async Task<Error> AddArticle(long articleId, string author)
         {
             try
             {
-                _tagState.State.ArticleIds.Add(articleId);
+                _tagState.State.ArticleIds.Add($"{articleId}-{author}");
+                await _tagState.WriteStateAsync();
                 return Error.None;
             }
             catch (Exception ex)
@@ -43,17 +41,22 @@
             }
         }
 
-        public async Task<(List<long>, Error)> GetArticles()
+        public async Task<(List<(long ArticleId, string Author)>, Error)> GetArticles()
         {
-            var list = _tagState.State.ArticleIds.ToList();
+            var list = _tagState.State.ArticleIds.Select(x => 
+            {
+                var splitted = x.Split("-");
+                return (long.Parse(splitted[0]), splitted[1]);
+            }).ToList();
             return await Task.FromResult((list, Error.None));
         }
 
-        public async Task<Error> RemoveArticle(long articleId)
+        public async Task<Error> RemoveArticle(long articleId, string author)
         {
             try
             {
-                _tagState.State.ArticleIds.Remove(articleId);
+                _tagState.State.ArticleIds.Remove($"{articleId}-{author}");
+                await _tagState.WriteStateAsync();
                 return Error.None;
             }
             catch (Exception ex)
