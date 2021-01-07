@@ -28,7 +28,7 @@
             }
         }
 
-        public async Task<IError> AddArticle(long articleId)
+        public async Task<Error> AddArticle(long articleId)
         {
             try
             {
@@ -43,13 +43,13 @@
             }
         }
 
-        public async Task<(List<long>, IError)> GetArticles()
+        public async Task<(List<long>, Error)> GetArticles()
         {
             var list = _tagState.State.ArticleIds.ToList();
             return await Task.FromResult((list, Error.None));
         }
 
-        public async Task<IError> RemoveArticle(long articleId)
+        public async Task<Error> RemoveArticle(long articleId)
         {
             try
             {

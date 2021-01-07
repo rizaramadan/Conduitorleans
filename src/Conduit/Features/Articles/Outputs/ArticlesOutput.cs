@@ -11,7 +11,7 @@ namespace Conduit.Features.Articles.Outputs
 
     public class ArticlesOutput
     {
-        public List<IArticle> Articles { get; set; }
+        public List<Article> Articles { get; set; }
         public int ArticleCount { get; set; }
     }
 }

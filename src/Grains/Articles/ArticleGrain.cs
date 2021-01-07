@@ -12,11 +12,13 @@
 
     public class ArticleGrain : Grain, IArticleGrain
     {
-        private readonly IPersistentState<ArticleState> _article;
+        private static Guid ErrorGetGuid = Guid.Parse("1abf835e-6e1f-45b1-b6cd-7ddef724673e");
+        
+        private readonly IPersistentState<Article> _article;
         private readonly IGrainFactory _factory;
 
         public ArticleGrain(
-            [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<ArticleState> s,
+            [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<Article> s,
             IGrainFactory f
         )
         {
@@ -24,7 +26,7 @@
             _factory = f;
         }
 
-        public async Task<IError> CreateArticle(IArticle article)
+        public async Task<Error> CreateArticle(Article article)
         {
             this.GetPrimaryKeyLong(out var username);
             _article.State.Title = article.Title;
@@ -35,10 +37,22 @@
             _article.State.Description = article.Description;
             _article.State.TagList = article.TagList;
             _article.State.Author = username;
-            _article.State.Favorited = new List<IUser>(0);
+            _article.State.Favorited = new List<User>(0);
             _article.State.FavoritesCount = 0;
             await _article.WriteStateAsync();
             return Error.None;
+        }
+
+        public async Task<(Article Article, Error Error)> GetArticle()
+        {
+            try
+            {
+                return (_article.State, Error.None);
+            }
+            catch (Exception ex) 
+            {
+                return await Task.FromResult<(Article, Error)>((null,new Error(ErrorGetGuid, ex.Message)));
+            }
         }
     }
 }

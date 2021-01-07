@@ -48,15 +48,20 @@ namespace Conduit.Features.Articles
             /// this means a user can only create one article per second
             /// its still a reasonable limitation
             var key = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss"));
-            var article = _client.GetGrain<IArticleGrain>(key, username);
-            error = await article.CreateArticle(input.Article);
+            var grain = _client.GetGrain<IArticleGrain>(key, username);
+            error = await grain.CreateArticle(input.Article);
             if (error.Exist())
             {
                 return UnprocessableEntity(error);
             }
             else 
             {
-                return Ok(new CreateArticleOutput { Article = input.Article });
+                (Article Article, Error Error) savedArticle = await grain.GetArticle();
+                if (savedArticle.Error.Exist()) 
+                {
+                    return UnprocessableEntity(error);
+                }
+                return Ok(new CreateArticleOutput { Article = savedArticle.Article });
             }
 
         }

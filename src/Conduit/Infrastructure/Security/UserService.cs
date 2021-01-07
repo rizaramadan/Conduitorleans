@@ -30,7 +30,7 @@ namespace Conduit.Infrastructure.Security
         }
 
 
-        public async Task<(string, IError)> GetUsernameByEmail(string email)
+        public async Task<(string, Error)> GetUsernameByEmail(string email)
         {
             await using var conn = new NpgsqlConnection(connStr);
             await conn.OpenAsync();
@@ -55,7 +55,7 @@ namespace Conduit.Infrastructure.Security
             }
         }
 
-        public (string Username, IError Error) GetCurrentUsername()
+        public (string Username, Error Error) GetCurrentUsername()
         {
             return
             (

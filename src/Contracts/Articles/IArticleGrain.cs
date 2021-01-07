@@ -9,6 +9,7 @@ namespace Contracts.Articles
     public interface IArticleGrain : IGrainWithIntegerCompoundKey
     {
         //TODO: create grain implementation
-        Task<IError> CreateArticle(IArticle article);
+        Task<Error> CreateArticle(Article article);
+        Task<(Article Article, Error Error)> GetArticle();
     }
 }

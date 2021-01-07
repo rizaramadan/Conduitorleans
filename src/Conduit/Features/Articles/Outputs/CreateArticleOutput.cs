@@ -6,6 +6,6 @@ namespace Conduit.Features.Articles.Outputs
     //TODO: create the neccessary structure based on Postmnen's
     public class CreateArticleOutput 
     {
-        public IArticle Article { get; set; }
+        public Article Article { get; set; }
     }
 }

@@ -16,10 +16,10 @@ namespace Grains.Users
 {
     public class UserGrain : Grain, IUserGrain
     {
-        public static readonly IError UnregisteredUserLogin =
+        public static readonly Error UnregisteredUserLogin =
             new Error("d7a011a1-3f86-4797-b6ef-210b4b041121", "login of unregistered user");
 
-        public static readonly IError EmailPasswordMismatch =
+        public static readonly Error EmailPasswordMismatch =
             new Error("069e089f-1ff9-49a6-8821-7091ab9fa0a7", "email or password mismatch");
 
         private readonly IPersistentState<UserState> _userState;
@@ -38,7 +38,7 @@ namespace Grains.Users
         /// users are consider registered when having a password
         /// </summary>
         /// <returns></returns>
-        public async Task<(bool, IError)> HasRegistered()
+        public async Task<(bool, Error)> HasRegistered()
         {
             var result = await Task.FromResult
             (
@@ -47,7 +47,7 @@ namespace Grains.Users
             return (result, Error.None);
         }
 
-        public async Task<IError> Login(string email, string password)
+        public async Task<Error> Login(string email, string password)
         {
             var (hasRegistered, error) = await HasRegistered();
             if (error.Exist())
@@ -76,7 +76,7 @@ namespace Grains.Users
             }
         }
 
-        public async Task<IError> Register(string email, string password)
+        public async Task<Error> Register(string email, string password)
         {
             var (hasRegistered, error) = await HasRegistered();
             if (error.Exist())
@@ -98,7 +98,7 @@ namespace Grains.Users
             return Error.None;
         }
 
-        public async Task<(string, IError)> GetEmail()
+        public async Task<(string, Error)> GetEmail()
         {
             return await Task.FromResult((_userState.State.Email, Error.None));
         }

@@ -6,8 +6,8 @@ namespace Contracts.Tags
 {
     public interface ITagGrain : IGrainWithStringKey
     {
-        Task<(List<long>, IError)> GetArticles();
-        Task<IError> AddArticle(long articleId);
-        Task<IError> RemoveArticle(long articleId);
+        Task<(List<long>, Error)> GetArticles();
+        Task<Error> AddArticle(long articleId);
+        Task<Error> RemoveArticle(long articleId);
     }
 }

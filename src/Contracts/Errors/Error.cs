@@ -4,20 +4,17 @@ using System.Text;
 
 namespace Contracts
 {
-    public interface IError
-    {
-        public Guid Code { get; }
-        public string Message { get; }
-    }
-
-    public class Error : IError
+    public class Error
     {
         public static readonly Error None = new Error(Guid.Empty, nameof(None));
 
-        public Error(Guid code, string message)
+        public Guid Code { get; }
+        public string Message { get; }
+
+        public Error(Guid c, string m)
         {
-            Code = code;
-            Message = message;
+            Code = c;
+            Message = m;
         }
 
         public Error(string code, string message)
@@ -28,17 +25,14 @@ namespace Contracts
             Message = message;
         }
 
-        public Guid Code { get; }
-        public string Message { get; }
-
         public override bool Equals(object obj) =>
-            obj is IError error && Code.Equals(error.Code);
+            obj is Error error && Code.Equals(error.Code);
 
         public override int GetHashCode() => Code.GetHashCode();
     }
 
     public static class IErrorExtension
     {
-        public static bool Exist(this IError error) => !error.Equals(Error.None);
+        public static bool Exist(this Error error) => !error.Equals(Error.None);
     }
 }

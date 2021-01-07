@@ -8,9 +8,9 @@ namespace Contracts.Users
 {
     public interface IUserGrain : IGrainWithStringKey
     {
-        Task<(bool, IError)> HasRegistered();
-        Task<IError> Register(string email, string password);
-        Task<(string Email,IError Error)> GetEmail();
-        Task<IError> Login(string email, string password);
+        Task<(bool, Error)> HasRegistered();
+        Task<Error> Register(string email, string password);
+        Task<(string Email,Error Error)> GetEmail();
+        Task<Error> Login(string email, string password);
     }
 }

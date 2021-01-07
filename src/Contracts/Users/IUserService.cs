@@ -4,8 +4,8 @@ namespace Contracts.Users
 {
     public interface IUserService
     {
-        Task<(string, IError)> GetUsernameByEmail(string email);
+        Task<(string, Error)> GetUsernameByEmail(string email);
 
-        (string Username, IError Error) GetCurrentUsername();
+        (string Username, Error Error) GetCurrentUsername();
     }
 }
