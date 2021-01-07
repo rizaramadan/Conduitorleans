@@ -27,11 +27,33 @@ namespace Conduit.Features.Articles
             _userService = u;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Get(GetArticlesInput input)
-        //{
-        //    return await Task.FromResult(Ok(new ArticlesOutput())) ;
-        //}
+        [HttpGet]
+        public async Task<IActionResult> Get(
+            [FromQuery] int? limit, 
+            [FromQuery] int? offset
+        )
+        {
+            if (limit.HasValue && offset.HasValue)
+            {
+                return await HomeGuest(limit.Value, offset.Value);
+            }
+            else if (!(limit.HasValue || offset.HasValue)) 
+            {
+                return await HomeGuest(10, 0);
+            }
+            return await Task.FromResult(Ok(new ArticlesOutput()));
+        }
+
+        private async Task<IActionResult> HomeGuest(int limit, int offset)
+        {
+            var articlesGrain = _client.GetGrain<IArticlesGrain>(0);
+            var output = await articlesGrain.GetHomeGuestArticles(limit, offset);
+            return Ok(new
+            {
+                articles = output.Articles,
+                articlesCount = output.Articles.Count
+            });
+        }
 
         [Authorize]
         [HttpPost]
