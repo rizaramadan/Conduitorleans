@@ -39,7 +39,7 @@
         private async Task SaveArticle(Article article, string username)
         {
             _article.State.Title = article.Title;
-            _article.State.Slug = article.Slug;
+            _article.State.Slug = article.Title.GenerateSlug();
             _article.State.Body = article.Body;
             _article.State.CreatedAt = DateTime.Now;
             _article.State.UpdatedAt = _article.State.CreatedAt;
@@ -69,7 +69,7 @@
             {
                 return (_article.State, Error.None);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return await Task.FromResult<(Article, Error)>((null,new Error(ErrorGetGuid, ex.Message)));
             }
