@@ -10,9 +10,17 @@
 
     public class CreateArticleInput
     {
-        public Article Article { get; set; }
+        public PostArticle Article { get; set; }
     }
-    
+    public class PostArticle
+    {
+        public object Author { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Body { get; set; }
+        public List<string> TagList { get; set; }
+    }
+
     public class CreateArticleValidator : AbstractValidator<CreateArticleInput>
     {
         public CreateArticleValidator()

@@ -71,7 +71,13 @@ namespace Conduit.Features.Articles
             /// its still a reasonable limitation
             var key = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss"));
             var grain = _client.GetGrain<IArticleGrain>(key, username);
-            error = await grain.CreateArticle(input.Article);
+            error = await grain.CreateArticle(new Article 
+            {
+                Title = input.Article.Title,
+                Body = input.Article.Body,
+                Description = input.Article.Description,
+                TagList = input.Article.TagList
+            });
             if (error.Exist())
             {
                 return UnprocessableEntity(error);
