@@ -800,8 +800,10 @@ CREATE INDEX ix_orleansstorage ON public.orleansstorage USING btree (grainidhash
 
 CREATE INDEX user_details ON orleansstorage ((payloadjson->>'Email')) WHERE graintypestring = 'Grains.Users.UserGrain,Grains.UserGrain';
 
-CREATE INDEX articles_index ON orleansstorage ((payloadjson->>'CreatedAt') DESC NULLS LAST)
-    WHERE graintypestring = 'Grains.Articles.ArticleGrain,Grains.UserGrain';
+CREATE INDEX articles_index
+    ON orleansstorage USING btree ((payloadjson ->> 'CreatedAt'::text) desc)
+    INCLUDE (grainidn1, grainidextensionstring)
+    WHERE ((graintypestring)::text = 'Grains.Articles.ArticleGrain,Grains.UserGrain'::text);
 
 
 --
