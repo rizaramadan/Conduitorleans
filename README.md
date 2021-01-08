@@ -5,7 +5,7 @@
 
 ### [Demo](https://github.com/gothinkster/realworld)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
-This codebase was created to demonstrate a fully fledged fullstack application built with [Microsoft Orleans](https://dotnet.github.io/orleans/) including CRUD operations, authentication, routing, pagination, and more.
+This **Work-In-Progress** codebase was created to demonstrate a fully fledged fullstack application built with [Microsoft Orleans](https://dotnet.github.io/orleans/) including CRUD operations, authentication, routing, pagination, and more.
 
 We've gone to great lengths to adhere to the [Microsoft Orleans](https://dotnet.github.io/orleans/) community styleguides & best practices.
 
