@@ -34,6 +34,9 @@ is one of it. See https://golang.org/doc/tutorial/handle-errors. In C#, tuple is
 This might be changed in the future, like removed altogether, but currently we are still unsure to continue or stop.
 Leave it like this for the time being.
 
+For more in-depth and complete example of Orleans sample, please look at [OneBoxDeployment](https://github.com/dotnet/orleans/tree/master/Samples/OneBoxDeployment)
+or [road-to-orleans](https://github.com/PiotrJustyna/road-to-orleans).
+
 # Getting Started
 to have this up and running, steps are as follow:
 1. clone this repository
