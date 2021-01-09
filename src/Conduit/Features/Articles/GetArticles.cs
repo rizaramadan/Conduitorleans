@@ -75,12 +75,15 @@
 
                 var articlesOutput = articles.Articles
                     .Select(x => _converter(x, authors[x.Author])).ToList();
+
+                var allArticlesCounter = _client.GetGrain<ICounterGrain>(nameof(IArticleGrain));
+                var count = await allArticlesCounter.Get();
                 return
                 (
                     new GetArticlesOutput
                     {
                         Articles = articlesOutput,
-                        ArticlesCount = articles.Articles.Count
+                        ArticlesCount = count
                     },
                     Error.None
                 );

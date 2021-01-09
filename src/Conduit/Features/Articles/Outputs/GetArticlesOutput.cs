@@ -21,7 +21,6 @@ namespace Conduit.Features.Articles.Outputs
         public ArticleAuthor Author { get; set; }
         public List<User> Favorited { get; set; }
         public int FavoritesCount { get; set; }
-
     }
 
     public class ArticleAuthor 
@@ -34,6 +33,6 @@ namespace Conduit.Features.Articles.Outputs
     public class GetArticlesOutput
     {
         public List<GetArticleOutput> Articles { get; set; }
-        public int ArticlesCount { get; set; }
+        public ulong ArticlesCount { get; set; }
     }
 }
