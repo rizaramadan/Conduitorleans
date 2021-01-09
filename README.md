@@ -43,6 +43,7 @@ For the ASP.NET Core Web API, some notable packages used (beside Orleans):
 3. [Swashbuckle for ASP.NET Core](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 4. [Feature folder](https://github.com/OdeToCode/AddFeatureFolders)
 5. [Npgsql](https://www.npgsql.org) for cluster client accessing cluster management table
+6. [MediaTR](https://github.com/jbogard/MediatR) for thin controllers
 
 note that ASP.NET Core Web API don't use ngpsql to access database directly in the logic, its only 
 used for accessing cluster management table. 
