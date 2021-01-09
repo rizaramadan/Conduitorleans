@@ -9,24 +9,29 @@ using System.Threading.Tasks;
 
 namespace Conduit.Features.Articles.Outputs
 {
-    public class ArticleOutput
+    public class GetArticleOutput
     {
-         public string Title { get; set; }
+        public string Title { get; set; }
         public string Slug { get; set; }
         public string Body { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string Description { get; set; }
         public List<string> TagList { get; set; }
-        public User Author { get; set; }
+        public ArticleAuthor Author { get; set; }
         public List<User> Favorited { get; set; }
         public int FavoritesCount { get; set; }
 
     }
 
-    public class ArticlesOutput
+    public class ArticleAuthor 
     {
-        public List<ArticleOutput> Articles { get; set; }
-        public int ArticleCount { get; set; }
+        public string Username { get; set; }
+    }
+
+    public class GetArticlesOutput
+    {
+        public List<GetArticleOutput> Articles { get; set; }
+        public int ArticlesCount { get; set; }
     }
 }

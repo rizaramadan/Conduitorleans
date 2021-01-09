@@ -11,6 +11,7 @@ using Orleans;
 using Contracts.Articles;
 using Contracts.Users;
 using Contracts;
+using MediatR;
 
 namespace Conduit.Features.Articles
 {
@@ -19,12 +20,16 @@ namespace Conduit.Features.Articles
     [Produces("application/json")]
     public class ArticlesController : ControllerBase
     {
+        private const string KeyFormat = "yyyyMMddHHmmss";
+
         private readonly IClusterClient _client;
         private readonly IUserService _userService;
-        public ArticlesController(IClusterClient c, IUserService u)
+        private readonly IMediator _mediator;
+        public ArticlesController(IClusterClient c, IUserService u, IMediator m)
         {
             _client = c;
             _userService = u;
+            _mediator = m;
         }
 
         [HttpGet]
@@ -33,26 +38,16 @@ namespace Conduit.Features.Articles
             [FromQuery] int? offset
         )
         {
-            if (limit.HasValue && offset.HasValue)
+            (GetArticlesOutput Output, Error Error) = await _mediator.Send(new GetArticlesInput
             {
-                return await HomeGuest(limit.Value, offset.Value);
-            }
-            else if (!(limit.HasValue || offset.HasValue)) 
-            {
-                return await HomeGuest(10, 0);
-            }
-            return await Task.FromResult(Ok(new ArticlesOutput()));
-        }
-
-        private async Task<IActionResult> HomeGuest(int limit, int offset)
-        {
-            var articlesGrain = _client.GetGrain<IArticlesGrain>(0);
-            var output = await articlesGrain.GetHomeGuestArticles(limit, offset);
-            return Ok(new
-            {
-                articles = output.Articles,
-                articlesCount = output.Articles.Count
+                Limit = limit,
+                Offset = offset
             });
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+            return Ok(Output);
         }
 
         [Authorize]
@@ -64,12 +59,13 @@ namespace Conduit.Features.Articles
             {
                 return UnprocessableEntity(error);
             }
+
             /// The key of article is compound of long and string. 
             /// integer is filled with yyyyMMddHHmmss parse as long
             /// string is filled with creator's userId as string
             /// this means a user can only create one article per second
             /// its still a reasonable limitation
-            var key = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss"));
+            var key = long.Parse(DateTime.Now.ToString(KeyFormat));
             var grain = _client.GetGrain<IArticleGrain>(key, username);
             error = await grain.CreateArticle(new Article 
             {
@@ -82,16 +78,13 @@ namespace Conduit.Features.Articles
             {
                 return UnprocessableEntity(error);
             }
-            else 
-            {
-                (Article Article, Error Error) savedArticle = await grain.GetArticle();
-                if (savedArticle.Error.Exist()) 
-                {
-                    return UnprocessableEntity(error);
-                }
-                return Ok(new CreateArticleOutput { Article = savedArticle.Article });
-            }
 
+            (Article Article, Error Error) savedArticle = await grain.GetArticle();
+            if (savedArticle.Error.Exist()) 
+            {
+                return UnprocessableEntity(error);
+            }
+            return Ok(new CreateArticleOutput { Article = savedArticle.Article });
         }
     }
 }
