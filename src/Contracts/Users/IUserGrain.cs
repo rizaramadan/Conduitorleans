@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Orleans;
-
-namespace Contracts.Users
+﻿namespace Contracts.Users
 {
+    using System.Threading.Tasks;
+    using Orleans;
+
     public interface IUserGrain : IGrainWithStringKey
     {
         Task<(bool, Error)> HasRegistered();

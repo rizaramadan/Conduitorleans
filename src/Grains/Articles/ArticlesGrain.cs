@@ -29,9 +29,7 @@
 
         private readonly IGrainFactory _factory;
 
-        public ArticlesGrain(
-            IGrainFactory f
-        )
+        public ArticlesGrain(IGrainFactory f)
         {
             _factory = f;
         }
