@@ -39,7 +39,7 @@
             }
         }
 
-        public async Task<(List<(long ArticleId, string Author)>, Error)> GetArticles()
+        public async Task<(List<(long ArticleId, string Author)> ArticleIds, Error Error)> GetArticles()
         {
             var list = _tagState.State.ArticleIds.Select(x => 
             {

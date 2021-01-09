@@ -1,4 +1,4 @@
-﻿namespace Conduit.Features.Articles.Inputs
+﻿namespace Conduit.Features.Articles
 {
     using Conduit.Features.Articles.Outputs;
     using Contracts;
@@ -38,7 +38,7 @@
     public class GetArticlesHandler : IRequestHandler<GetArticlesInput, 
                                       (GetArticlesOutput Output, Error Error)>
     {
-        private readonly IClusterClient _client;
+        
         private static readonly Func<Article, User, GetArticleOutput> _converter = (x,y) =>
         {
             var output = new GetArticleOutput
@@ -62,7 +62,14 @@
             return output;
         };
 
-        public GetArticlesHandler(IClusterClient c) => _client = c;
+        private readonly IClusterClient _client;
+        private readonly IMediator _mediator;
+
+        public GetArticlesHandler(IClusterClient c, IMediator m)
+        {
+            _client = c;
+            _mediator = m;
+        }
 
         public async Task<(GetArticlesOutput Output, Error Error)> 
             Handle(GetArticlesInput req, CancellationToken ct)
@@ -70,7 +77,9 @@
             try
             {
                 var articlesGrain = _client.GetGrain<IArticlesGrain>(0);
-                var articles = await articlesGrain.GetHomeGuestArticles(req.Limit.Value, req.Offset.Value);
+                var articles = string.IsNullOrWhiteSpace(req.Tag) 
+                    ? await articlesGrain.GetHomeGuestArticles(req.Limit.Value, req.Offset.Value)
+                    : await _mediator.Send(new GetArticleByTag(req));
                 Dictionary<string, User> authors = await GetAuthorMap(articles);
 
                 var articlesOutput = articles.Articles

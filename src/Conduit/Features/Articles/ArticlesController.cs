@@ -34,12 +34,14 @@ namespace Conduit.Features.Articles
 
         [HttpGet]
         public async Task<IActionResult> Get(
+            [FromQuery] string tag,
             [FromQuery] int? limit, 
             [FromQuery] int? offset
         )
         {
             (GetArticlesOutput Output, Error Error) = await _mediator.Send(new GetArticlesInput
             {
+                Tag = tag,
                 Limit = limit,
                 Offset = offset
             });
