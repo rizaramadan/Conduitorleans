@@ -37,7 +37,7 @@
         /// <summary>
         /// users are consider registered when having a password
         /// </summary>
-        /// <returns></returns>
+        /// <returns>true of use has registered</returns>
         public async Task<(bool, Error)> HasRegistered()
         {
             var result = await Task.FromResult
