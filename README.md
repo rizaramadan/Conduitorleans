@@ -3,7 +3,27 @@
 > ### [Microsoft Orleans](https://dotnet.github.io/orleans/) codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
 
-### [Demo](https://github.com/gothinkster/realworld)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
+### What is [RealWorld](https://demo.realworld.io/)
+
+[Realworld](https://demo.realworld.io/) is a simple content management system similar to Medium.com or Wordpress but is much simpler.
+For live demo, please visit: **https://demo.realworld.io/**. Its basic features are:
+1. signup & sigin users
+2. CRUD articles
+3. articles tags, favorite, comments
+
+[Realworld](https://demo.realworld.io/) is built using SPA, having Frontend Web app and Backend Web API.
+For further information, please visit [RealWorld Github](https://github.com/gothinkster/realworld).
+
+#### Screenshots
+Home page
+![Home](imgs/home.jpg)
+
+Article Page
+![Article](imgs/article.jpg)
+
+
+
+### [Demo](https://demo.realworld.io/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld Github](https://github.com/gothinkster/realworld)
 
 This **Work-In-Progress** codebase was created to demonstrate a fully fledged fullstack application built with [Microsoft Orleans](https://dotnet.github.io/orleans/) including CRUD operations, authentication, routing, pagination, and more.
 
