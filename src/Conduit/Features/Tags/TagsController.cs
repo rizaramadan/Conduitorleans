@@ -25,7 +25,7 @@
         public async Task<IActionResult> Get() 
         {
             var tagsGrain = _client.GetGrain<ITagsGrain>(0);
-            (List<string> Tags, Contracts.Error Error) = await tagsGrain.GetTags();
+            (List<string> Tags, Error Error) = await tagsGrain.GetTags();
             if (Error.Exist()) 
             {
                 return UnprocessableEntity(Error);

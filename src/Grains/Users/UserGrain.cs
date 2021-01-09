@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Contracts;
-using Contracts.Errors;
-using Contracts.Security;
-using Contracts.Users;
-using Microsoft.Extensions.Logging;
-using Orleans;
-using Orleans.Runtime;
-
-namespace Grains.Users
+﻿namespace Grains.Users
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Contracts;
+    using Contracts.Security;
+    using Contracts.Users;
+    using Orleans;
+    using Orleans.Runtime;
+
     public class UserGrain : Grain, IUserGrain
     {
         public static readonly Error UnregisteredUserLogin =
@@ -22,11 +17,16 @@ namespace Grains.Users
         public static readonly Error EmailPasswordMismatch =
             new Error("069e089f-1ff9-49a6-8821-7091ab9fa0a7", "email or password mismatch");
 
-        private readonly IPersistentState<UserState> _userState;
+        public static readonly Error UserAlreadyRegistered =
+            new Error("e119c62f-c276-4799-a6a0-fbc43da87c2b", "user already registered");
+
+
+
+        private readonly IPersistentState<User> _userState;
         private readonly IGrainFactory _factory;
 
         public UserGrain(
-            [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<UserState> s,
+            [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<User> s,
             IGrainFactory f
         )
         {
@@ -42,7 +42,7 @@ namespace Grains.Users
         {
             var result = await Task.FromResult
             (
-                _userState.State.Password?.Length > 0
+                _userState.State?.Password?.Length > 0
             );
             return (result, Error.None);
         }
@@ -60,19 +60,26 @@ namespace Grains.Users
                 return UnregisteredUserLogin;
             }
 
-            var passwordHasher = _factory.GetGrain<IPasswordHasher>(0);
-            var challenge = await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
-            if
-            (
-                _userState.State.Password.SequenceEqual(challenge) &&
-                _userState.State.Email.Equals(email, StringComparison.OrdinalIgnoreCase)
-            )
+            try
             {
-                return Error.None;
+                var passwordHasher = _factory.GetGrain<IPasswordHasher>(0);
+                var challenge = await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
+                if
+                (
+                    _userState.State.Password.SequenceEqual(challenge) &&
+                    _userState.State.Email.Equals(email, StringComparison.OrdinalIgnoreCase)
+                )
+                {
+                    return Error.None;
+                }
+                else
+                {
+                    return EmailPasswordMismatch;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return EmailPasswordMismatch;
+                return new Error("9fca3552-9a5d-45b6-ad96-7a7e115306c2", ex.Message);
             }
         }
 
@@ -86,16 +93,23 @@ namespace Grains.Users
 
             if (hasRegistered)
             {
-                return new UserRegisteredError();
+                return UserAlreadyRegistered;
             }
 
-            _userState.State.Email    = email;
-            var passwordHasher        = _factory.GetGrain<IPasswordHasher>(0);
-            _userState.State.Salt     = Guid.NewGuid();
-            _userState.State.Password =
-                await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
-            await _userState.WriteStateAsync();
-            return Error.None;
+            try
+            {
+                _userState.State.Email = email;
+                var passwordHasher = _factory.GetGrain<IPasswordHasher>(0);
+                _userState.State.Salt = Guid.NewGuid();
+                _userState.State.Password =
+                    await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
+                await _userState.WriteStateAsync();
+                return Error.None;
+            }
+            catch (Exception ex)
+            {
+                return new Error("b1890485-4204-4e1d-84d5-1eab7866dfbc", ex.Message);
+            }
         }
 
         public async Task<(string, Error)> GetEmail()

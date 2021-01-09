@@ -35,9 +35,7 @@
             }
             catch (Exception ex)
             {
-                return await Task.FromResult(
-                       new Error("1b3b5a91-4f13-472f-b878-11f4cf103c36", ex.ToString())
-                );
+                return new Error("1b3b5a91-4f13-472f-b878-11f4cf103c36", ex.Message);
             }
         }
 
@@ -61,9 +59,7 @@
             }
             catch (Exception ex)
             {
-                return await Task.FromResult(
-                       new Error("1f04e560-0d38-4330-abae-59475f578a3e", ex.ToString())
-                );
+                return new Error("1f04e560-0d38-4330-abae-59475f578a3e", ex.Message);
             }
         }
     }

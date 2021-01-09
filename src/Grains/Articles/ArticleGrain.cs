@@ -30,10 +30,17 @@
 
         public async Task<Error> CreateArticle(Article article)
         {
-            var articleId = this.GetPrimaryKeyLong(out var username);
-            await AddArticleToTags(article, articleId, username);
-            await SaveArticle(article, username);
-            return Error.None;
+            try
+            {
+                var articleId = this.GetPrimaryKeyLong(out var username);
+                await AddArticleToTags(article, articleId, username);
+                await SaveArticle(article, username);
+                return Error.None;
+            }
+            catch (Exception ex) 
+            {
+                return new Error("e3ee566e-391b-42d8-ac66-2e90aa8bf71b", ex.Message);
+            }
         }
 
         private async Task SaveArticle(Article article, string username)

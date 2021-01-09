@@ -38,9 +38,16 @@
 
         public async Task<(List<Article>, Error)> GetHomeGuestArticles(int limit, int offset)
         {
-            var idAuthors = await GetArticlesId(limit, offset);
-            var cleanArticles = await GetArticlesData(idAuthors);
-            return (cleanArticles, Error.None);
+            try
+            {
+                var idAuthors = await GetArticlesId(limit, offset);
+                var cleanArticles = await GetArticlesData(idAuthors);
+                return (cleanArticles, Error.None);
+            }
+            catch (Exception ex)
+            {
+                return (null, new Error("6a80f54d-d6a6-4471-99e7-9bb1aec5a323", ex.Message));
+            }
         }
 
         private async Task<List<(long, string)>> GetArticlesId(int limit, int offset)
