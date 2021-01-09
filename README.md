@@ -52,6 +52,11 @@ For The Orleans implementation, some notes:
 2. Related to grains persistent provider, the **payloadjson** column of **orleansstorage** table is changed from default TEXT to [JSONB](https://github.com/rizaramadan/Conduitorleans/blob/31d0abe5243349a402ece63acc9f8cf61a7dc69d/scripts/conduitorleans_all.sql#L491)
 3. [Npgsql](https://www.npgsql.org) for direct query to database
 
+
+Picture below ilustrate the relations of ASP.NET Core Web API, represented by **Conduit** and 
+Orleans implementation, represented by **SiloHost** :
+![High-level architecture](imgs/high-level.jpg)
+
 In the code base, we also try to adopt practice from Golang language regarding method return value being Error
 is one of it. See https://golang.org/doc/tutorial/handle-errors. In C#, tuple is used to replicate similar practice.
 This might be changed in the future, like removed altogether, but currently we are still unsure to continue or stop.
