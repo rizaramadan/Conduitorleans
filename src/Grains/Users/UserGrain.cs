@@ -104,6 +104,8 @@
                 _userState.State.Password =
                     await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
                 await _userState.WriteStateAsync();
+                var emailUserGrain = _factory.GetGrain<IEmailUserGrain>(_userState.State.Email);
+                await emailUserGrain.SetUsername(this.GetPrimaryKeyString());
                 return Error.None;
             }
             catch (Exception ex)

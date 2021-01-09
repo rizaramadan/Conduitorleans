@@ -20,13 +20,16 @@ is for.
 For the ASP.NET Core Web API, some notable packages used (beside Orleans):
 1. [Fluent validation](https://github.com/FluentValidation/FluentValidation)
 2. [Microsoft JWT Bearer](https://github.com/aspnet/Security/tree/master/src/Microsoft.AspNetCore.Authentication.JwtBearer)
-3. [Npgsql](https://www.npgsql.org) since we are using PostgreSQL as the database
-4. [Swashbuckle for ASP.NET Core](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
-5. [Feature folder](https://github.com/OdeToCode/AddFeatureFolders)
+3. [Swashbuckle for ASP.NET Core](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
+4. [Feature folder](https://github.com/OdeToCode/AddFeatureFolders)
+5. [Npgsql](https://www.npgsql.org) for cluster client accessing cluster management table
+
+note that ASP.NET Core Web API don't use ngpsql to access database directly in the logic, its only 
+used for accessing cluster management table. 
 
 For The Orleans implementation, some notes:
-1. Postgresql is used for both AdoNet Clustering and Grains Persistent provider
-2. Related to grains persistent provider, the **payloadjson** column of **Orleansstorage** table is changed from default TEXT to [JSONB](https://github.com/rizaramadan/Conduitorleans/blob/31d0abe5243349a402ece63acc9f8cf61a7dc69d/scripts/conduitorleans_all.sql#L491)
+1. Postgresql is used for both AdoNet clustering and grains persistent provider
+2. Related to grains persistent provider, the **payloadjson** column of **orleansstorage** table is changed from default TEXT to [JSONB](https://github.com/rizaramadan/Conduitorleans/blob/31d0abe5243349a402ece63acc9f8cf61a7dc69d/scripts/conduitorleans_all.sql#L491)
 3. [Npgsql](https://www.npgsql.org) for direct query to database
 
 In the code base, we also try to adopt practice from Golang language regarding method return value being Error

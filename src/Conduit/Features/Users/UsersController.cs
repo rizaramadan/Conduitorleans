@@ -55,7 +55,8 @@ namespace Conduit.Features.Users
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginWrapper l)
         {
-            var (userId, error) = await _userService.GetUsernameByEmail(l.User.Email);
+            var emailUserGrain = _client.GetGrain<IEmailUserGrain>(l.User.Email);
+            var (userId, error) = await emailUserGrain.GetUsername();
             if (error.Exist())
             {
                 return UnprocessableEntity(error);
