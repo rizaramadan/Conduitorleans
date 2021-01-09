@@ -11,5 +11,7 @@
         public byte[] Password { get; set; }
         public string Bio { get; set; }
         public Guid Salt { get; set; }
+        public string Image { get; set; }
+
     }
 }

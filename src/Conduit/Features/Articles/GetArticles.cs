@@ -3,9 +3,11 @@
     using Conduit.Features.Articles.Outputs;
     using Contracts;
     using Contracts.Articles;
+    using Contracts.Users;
     using MediatR;
     using Orleans;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -37,7 +39,7 @@
                                       (GetArticlesOutput Output, Error Error)>
     {
         private readonly IClusterClient _client;
-        private static readonly Func<Article, GetArticleOutput> _converter = x =>
+        private static readonly Func<Article, User, GetArticleOutput> _converter = (x,y) =>
         {
             var output = new GetArticleOutput
             {
@@ -48,9 +50,14 @@
                 UpdatedAt      = x.UpdatedAt,
                 Description    = x.Description,
                 TagList        = x.TagList,
-                Author         = new ArticleAuthor { Username = x.Author },
                 Favorited      = x.Favorited,
-                FavoritesCount = x.FavoritesCount
+                FavoritesCount = x.FavoritesCount,
+                Author         = new ArticleAuthor 
+                { 
+                    Username = y.Username, 
+                    Bio      = y.Bio, 
+                    Image    = y.Image 
+                }
             };
             return output;
         };
@@ -60,18 +67,41 @@
         public async Task<(GetArticlesOutput Output, Error Error)> 
             Handle(GetArticlesInput req, CancellationToken ct)
         {
-            var articlesGrain = _client.GetGrain<IArticlesGrain>(0);
-            var output = await articlesGrain.GetHomeGuestArticles(req.Limit.Value, req.Offset.Value);
-            var articles = output.Articles.Select(x => _converter(x)).ToList();
-            return 
-            (
-                new GetArticlesOutput
-                {
-                    Articles = articles,
-                    ArticlesCount = output.Articles.Count
-                }, 
-                Error.None
-            );
+            try
+            {
+                var articlesGrain = _client.GetGrain<IArticlesGrain>(0);
+                var articles = await articlesGrain.GetHomeGuestArticles(req.Limit.Value, req.Offset.Value);
+                Dictionary<string, User> authors = await GetAuthorMap(articles);
+
+                var articlesOutput = articles.Articles
+                    .Select(x => _converter(x, authors[x.Author])).ToList();
+                return
+                (
+                    new GetArticlesOutput
+                    {
+                        Articles = articlesOutput,
+                        ArticlesCount = articles.Articles.Count
+                    },
+                    Error.None
+                );
+            }
+            catch (Exception ex)
+            {
+                return (null, new Error("7f9cef3e-ec24-45d9-b59d-f188ed1c6e5b", ex.Message));
+            }
+        }
+
+        private async Task<Dictionary<string, User>> GetAuthorMap((List<Article> Articles, Error Error) output)
+        {
+            var authorUsernames = output.Articles.Select(x => x.Author).ToHashSet();
+            var tasks = new List<Task<(User, Error)>>();
+            foreach (var username in authorUsernames)
+            {
+                var userGrain = _client.GetGrain<IUserGrain>(username);
+                tasks.Add(userGrain.Get());
+            }
+            var authors = await Task.WhenAll(tasks);
+            return authors.ToDictionary(x => x.Item1.Username, y => y.Item1); 
         }
     }
 }

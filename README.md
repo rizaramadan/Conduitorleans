@@ -56,6 +56,7 @@ For The Orleans implementation, some notes:
 
 Picture below ilustrate the relations of ASP.NET Core Web API, represented by **Conduit** and 
 Orleans implementation, represented by **SiloHost** :
+
 ![High-level architecture](imgs/high-level.jpg)
 
 In the code base, we also try to adopt practice from Golang language regarding method return value being Error

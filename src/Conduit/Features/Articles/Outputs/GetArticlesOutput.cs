@@ -27,6 +27,8 @@ namespace Conduit.Features.Articles.Outputs
     public class ArticleAuthor 
     {
         public string Username { get; set; }
+        public string Bio { get; set; }
+        public string Image { get; set; }
     }
 
     public class GetArticlesOutput

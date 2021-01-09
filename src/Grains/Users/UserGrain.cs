@@ -66,16 +66,13 @@
                 var challenge = await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
                 if
                 (
-                    _userState.State.Password.SequenceEqual(challenge) &&
-                    _userState.State.Email.Equals(email, StringComparison.OrdinalIgnoreCase)
+                    !_userState.State.Password.SequenceEqual(challenge) ||
+                    !_userState.State.Email.Equals(email, StringComparison.OrdinalIgnoreCase)
                 )
-                {
-                    return Error.None;
-                }
-                else
                 {
                     return EmailPasswordMismatch;
                 }
+                return Error.None;
             }
             catch (Exception ex)
             {
@@ -90,12 +87,10 @@
             {
                 return error;
             }
-
             if (hasRegistered)
             {
                 return UserAlreadyRegistered;
             }
-
             try
             {
                 _userState.State.Email = email;
@@ -117,6 +112,17 @@
         public async Task<(string, Error)> GetEmail()
         {
             return await Task.FromResult((_userState.State.Email, Error.None));
+        }
+
+        public async Task<(User User, Error Error)> Get()
+        {
+            var user = new User
+            {
+                Username = this.GetPrimaryKeyString(),
+                Image = _userState.State.Image,
+                Bio = _userState.State.Bio
+            };
+            return await Task.FromResult((user, Error.None));
         }
     }
 }
