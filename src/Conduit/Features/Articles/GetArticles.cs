@@ -3,11 +3,9 @@
     using Conduit.Features.Articles.Outputs;
     using Contracts;
     using Contracts.Articles;
-    using Contracts.Users;
     using MediatR;
     using Orleans;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -19,7 +17,6 @@
         public string Tag { get; set; }
         public string Autor { get; set; }
         public string Favorited { get; set; }
-
         private int? _limit;
         public int? Limit 
         {
@@ -32,31 +29,30 @@
             get => _offset.HasValue ? _offset : 0;
             set => _offset = value;
         }
-
     }
 
     public class GetArticlesHandler : IRequestHandler<GetArticlesInput, 
                                       (GetArticlesOutput Output, Error Error)>
     {
         
-        private static readonly Func<Article, User, GetArticleOutput> _converter = (x,y) =>
+        private static readonly Func<ArticleUserPair, GetArticleOutput> _converter = x =>
         {
             var output = new GetArticleOutput
             {
-                Title          = x.Title,
-                Slug           = x.Slug,
-                Body           = x.Body,
-                CreatedAt      = x.CreatedAt,
-                UpdatedAt      = x.UpdatedAt,
-                Description    = x.Description,
-                TagList        = x.TagList,
-                Favorited      = x.Favorited,
-                FavoritesCount = x.FavoritesCount,
+                Title          = x.Article.Title,
+                Slug           = x.Article.Slug,
+                Body           = x.Article.Body,
+                CreatedAt      = x.Article.CreatedAt,
+                UpdatedAt      = x.Article.UpdatedAt,
+                Description    = x.Article.Description,
+                TagList        = x.Article.TagList,
+                Favorited      = x.Article.Favorited,
+                FavoritesCount = x.Article.FavoritesCount,
                 Author         = new ArticleAuthor 
                 { 
-                    Username = y.Username, 
-                    Bio      = y.Bio, 
-                    Image    = y.Image 
+                    Username = x.User.Username, 
+                    Bio      = x.User.Bio, 
+                    Image    = x.User.Image 
                 }
             };
             return output;
@@ -77,22 +73,18 @@
             try
             {
                 var articlesGrain = _client.GetGrain<IArticlesGrain>(0);
-                var articles = string.IsNullOrWhiteSpace(req.Tag) 
-                    ? await articlesGrain.GetHomeGuestArticles(req.Limit.Value, req.Offset.Value)
-                    : await _mediator.Send(new GetArticleByTag(req));
-                Dictionary<string, User> authors = await GetAuthorMap(articles);
-
-                var articlesOutput = articles.Articles
-                    .Select(x => _converter(x, authors[x.Author])).ToList();
-
-                var allArticlesCounter = _client.GetGrain<ICounterGrain>(nameof(IArticleGrain));
-                var count = await allArticlesCounter.Get();
+                var result = await articlesGrain.GetHomeGuestArticles(req.Limit.Value, req.Offset.Value);
+                if (result.Error.Exist()) 
+                {
+                    return (null, result.Error);
+                }
+                var articlesOutput = result.Articles.Select(x => _converter(x)).ToList();
                 return
                 (
                     new GetArticlesOutput
                     {
                         Articles = articlesOutput,
-                        ArticlesCount = count
+                        ArticlesCount = result.Count
                     },
                     Error.None
                 );
@@ -101,19 +93,6 @@
             {
                 return (null, new Error("7f9cef3e-ec24-45d9-b59d-f188ed1c6e5b", ex.Message));
             }
-        }
-
-        private async Task<Dictionary<string, User>> GetAuthorMap((List<Article> Articles, Error Error) output)
-        {
-            var authorUsernames = output.Articles.Select(x => x.Author).ToHashSet();
-            var tasks = new List<Task<(User, Error)>>();
-            foreach (var username in authorUsernames)
-            {
-                var userGrain = _client.GetGrain<IUserGrain>(username);
-                tasks.Add(userGrain.Get());
-            }
-            var authors = await Task.WhenAll(tasks);
-            return authors.ToDictionary(x => x.Item1.Username, y => y.Item1); 
         }
     }
 }

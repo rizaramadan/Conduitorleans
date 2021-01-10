@@ -19,7 +19,7 @@ namespace Conduit.Features.Articles.Outputs
         public string Description { get; set; }
         public List<string> TagList { get; set; }
         public ArticleAuthor Author { get; set; }
-        public List<User> Favorited { get; set; }
+        public List<string> Favorited { get; set; }
         public int FavoritesCount { get; set; }
     }
 

@@ -15,7 +15,7 @@ namespace Contracts.Articles
         public string Description { get; set; }
         public List<string> TagList { get; set; }
         public string Author { get; set; }
-        public List<User> Favorited { get; set; }
+        public List<string> Favorited { get; set; }
         public int FavoritesCount { get; set; }
     }
 }

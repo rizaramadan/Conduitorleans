@@ -8,12 +8,19 @@
     using Orleans;
     using Orleans.Runtime;
 
+    public class CounterState
+    {
+        public ulong Current { get; }
+        public CounterState() => Current = 0;
+        public CounterState(ulong value) => Current = value;
+    }
+
     public class CounterGrain : Grain, ICounterGrain
     {
-        private readonly IPersistentState<ulong> _counter;
+        private readonly IPersistentState<CounterState> _counter;
 
         public CounterGrain(
-            [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<ulong> c
+            [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<CounterState> c
         )
         {
             _counter = c;
@@ -22,9 +29,9 @@
         {
             try
             {
-                if (_counter.State == 0)
+                if (_counter.State.Current > 0)
                 {
-                    _counter.State--;
+                    _counter.State = new CounterState(_counter.State.Current - 1);
                     await _counter.WriteStateAsync();
                     return Error.None;
                 }
@@ -38,14 +45,14 @@
 
         public async Task<ulong> Get()
         {
-            return await Task.FromResult(_counter.State);
+            return await Task.FromResult(_counter.State.Current);
         }
 
         public async Task<Error> Increement()
         {
             try
             {
-                _counter.State++;
+                _counter.State = new CounterState(_counter.State.Current + 1);
                 await _counter.WriteStateAsync();
                 return Error.None;
             }

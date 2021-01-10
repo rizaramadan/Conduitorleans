@@ -2,6 +2,7 @@
 {
     using Contracts;
     using Contracts.Articles;
+    using Contracts.Users;
     using Npgsql;
     using Orleans;
     using Orleans.Concurrency;
@@ -34,17 +35,19 @@
             _factory = f;
         }
 
-        public async Task<(List<Article>, Error)> GetHomeGuestArticles(int limit, int offset)
+        public async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> GetHomeGuestArticles(int limit, int offset)
         {
             try
             {
-                var idAuthors = await GetArticlesId(limit, offset);
-                var cleanArticles = await GetArticlesData(idAuthors);
-                return (cleanArticles, Error.None);
+                var articlesAndAuthors = await GetArticlesId(limit, offset);
+                var cleanArticles = await GetArticlesData(articlesAndAuthors);
+                var allArticlesCounter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
+                var count = await allArticlesCounter.Get();
+                return (cleanArticles, count, Error.None);
             }
             catch (Exception ex)
             {
-                return (null, new Error("6a80f54d-d6a6-4471-99e7-9bb1aec5a323", ex.Message));
+                return (null, 0, new Error("6a80f54d-d6a6-4471-99e7-9bb1aec5a323", ex.Message));
             }
         }
 
@@ -68,16 +71,32 @@
             return idAuthor;
         }
 
-        private async Task<List<Article>> GetArticlesData(List<(long, string)> idAuthors)
+        private async Task<List<ArticleUserPair>> GetArticlesData(List<(long, string)> idAuthors)
         {
-            var tasks = new List<Task<(Article article, Error error)>>(idAuthors.Count);
+            
+            var articleTasks = new List<Task<(Article article, Error error)>>(idAuthors.Count);
+            var authorTasks = new List<Task<(User User, Error Error)>>(idAuthors.Count);
+            var authorSet = new HashSet<string>();
             foreach (var each in idAuthors)
             {
-                var articleGrain = _factory.GetGrain<IArticleGrain>(each.Item1, each.Item2);
-                tasks.Add(articleGrain.GetArticle());
+                var articleId = each.Item1;
+                var authorId = each.Item2;
+                var articleGrain = _factory.GetGrain<IArticleGrain>(articleId, authorId);
+                articleTasks.Add(articleGrain.GetArticle());
+                if (!authorSet.Contains(authorId)) 
+                {
+                    authorSet.Add(authorId);
+                    var userGrain = _factory.GetGrain<IUserGrain>(authorId);
+                    authorTasks.Add(userGrain.Get());
+                }
             }
-            var output = await Task.WhenAll(tasks);
-            return output.Where(x => !x.error.Exist()).Select(x => x.article).ToList();
+
+            var articles = (await Task.WhenAll(articleTasks)).ToList();
+            var authors = (await Task.WhenAll(authorTasks)).ToDictionary(x => x.User.Username, y => y.User);
+
+            return articles.Where(x => !x.error.Exist())
+                .Select(x => new ArticleUserPair(x.article, authors[x.article.Author]))
+                .ToList();
         }
     }
 }

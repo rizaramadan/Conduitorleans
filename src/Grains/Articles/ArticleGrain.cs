@@ -53,7 +53,7 @@
             _article.State.Description = article.Description;
             _article.State.TagList = article.TagList;
             _article.State.Author = username;
-            _article.State.Favorited = new List<User>(0);
+            _article.State.Favorited = new List<string>(0);
             _article.State.FavoritesCount = 0;
             await _article.WriteStateAsync();
             var counter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
