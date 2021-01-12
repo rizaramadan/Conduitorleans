@@ -7,6 +7,6 @@
     public interface ITagArticlesGrain : IGrainWithStringKey
     {
         public Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
-            GetArticlesByTag(string tag, int limit, int offset);
+            GetArticlesByTag(int limit, int offset);
     }
 }

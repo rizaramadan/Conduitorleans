@@ -11,25 +11,22 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class TagArticlesGrain : Grain, ITagArticlesGrain
+    public class TagArticlesGrain : BaseArticleGrain, ITagArticlesGrain
     {
-        private readonly IGrainFactory _factory;
-
-        public TagArticlesGrain(IGrainFactory f) => _factory = f;
-
+        public TagArticlesGrain(IGrainFactory f) : base(f) { }
 
         public async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
-            GetArticlesByTag(string tag, int limit, int offset)
+            GetArticlesByTag(int limit, int offset)
         {
-            var tagGrain = _factory.GetGrain<ITagGrain>(tag);
-            (List<(long, string)> ArticleIds, Error Error) tags =
+            var tagGrain = _factory.GetGrain<ITagGrain>(this.GetPrimaryKeyString());
+            (List<(long ArticleId, string Author)> ArticleIds, Error Error) tags =
                 await tagGrain.GetArticles();
             var latest = tags.ArticleIds.OrderByDescending(x => x)
                 .Skip(offset)
                 .Take(limit)
                 .ToList();
 
-            var result = await ArticlesGrain.GetArticlesData(_factory, latest);
+            var result = await GetArticlesData(latest);
             var count = Convert.ToUInt64(tags.ArticleIds.Count);
             return (result, count, Error.None);
         }

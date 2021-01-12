@@ -6,21 +6,22 @@
     using MediatR;
     using Orleans;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class GetArticlesInput : IRequest<(GetArticlesOutput Output, Error Error)>
     {
-        public const int MaxLimit = 20;
+        public const int MaxLimit = 10;
 
         public string Tag { get; set; }
-        public string Autor { get; set; }
+        public string Author { get; set; }
         public string Favorited { get; set; }
         private int? _limit;
         public int? Limit 
         {
-            get => _limit.HasValue ? _limit : 0;
+            get => _limit.HasValue ? _limit : MaxLimit;
             set => _limit = value > MaxLimit ? MaxLimit : value;
         }
         private int? _offset;
@@ -29,6 +30,16 @@
             get => _offset.HasValue ? _offset : 0;
             set => _offset = value;
         }
+
+        public bool AllAtricles() => 
+            string.IsNullOrWhiteSpace(Tag) 
+            && string.IsNullOrWhiteSpace(Author)
+            && string.IsNullOrWhiteSpace(Favorited);
+
+        internal bool ExistTagOnly() =>
+            !string.IsNullOrWhiteSpace(Tag)
+            && string.IsNullOrWhiteSpace(Author)
+            && string.IsNullOrWhiteSpace(Favorited);
     }
 
     public class GetArticlesHandler : IRequestHandler<GetArticlesInput, 
@@ -50,31 +61,31 @@
                 FavoritesCount = x.Article.FavoritesCount,
                 Author         = new ArticleAuthor 
                 { 
-                    Username = x.User.Username, 
-                    Bio      = x.User.Bio, 
-                    Image    = x.User.Image 
+                    Username   = x.User.Username, 
+                    Bio        = x.User.Bio, 
+                    Image      = x.User.Image 
                 }
             };
             return output;
         };
 
         private readonly IClusterClient _client;
-        private readonly IMediator _mediator;
 
-        public GetArticlesHandler(IClusterClient c, IMediator m)
-        {
-            _client = c;
-            _mediator = m;
-        }
+        public GetArticlesHandler(IClusterClient c) => _client = c;
 
         public async Task<(GetArticlesOutput Output, Error Error)> 
             Handle(GetArticlesInput req, CancellationToken ct)
         {
             try
             {
-                var articlesGrain = _client.GetGrain<IArticlesGrain>(0);
-                var result = await articlesGrain.GetHomeGuestArticles(req.Limit.Value, req.Offset.Value);
-                if (result.Error.Exist()) 
+                (List<ArticleUserPair> Articles, ulong Count, Error Error) result =
+                req.AllAtricles() ?
+                    await GetAllArticles(req.Limit.Value, req.Offset.Value)
+                    : req.ExistTagOnly() ?
+                        await GetArticlesByTag(req)
+                        : (null, 0, Error.None);
+
+                if (result.Error.Exist())
                 {
                     return (null, result.Error);
                 }
@@ -93,6 +104,22 @@
             {
                 return (null, new Error("7f9cef3e-ec24-45d9-b59d-f188ed1c6e5b", ex.Message));
             }
+        }
+
+        private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> 
+            GetAllArticles(int limit, int offset)
+        {
+            var grains = _client.GetGrain<IArticlesGrain>(0);
+            var result = await grains.GetHomeGuestArticles(limit, offset);
+            return result;
+        }
+
+        private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
+            GetArticlesByTag(GetArticlesInput req)
+        {
+            var grains = _client.GetGrain<ITagArticlesGrain>(req.Tag);
+            var result = await grains.GetArticlesByTag(req.Limit.Value, req.Offset.Value);
+            return result;
         }
     }
 }
