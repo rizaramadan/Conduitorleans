@@ -35,12 +35,13 @@
             _factory = f;
         }
 
+        #region Get Home Guest Articles
         public async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> GetHomeGuestArticles(int limit, int offset)
         {
             try
             {
                 var articlesAndAuthors = await GetArticlesId(limit, offset);
-                var cleanArticles = await GetArticlesData(articlesAndAuthors);
+                var cleanArticles = await GetArticlesData(_factory, articlesAndAuthors);
                 var allArticlesCounter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
                 var count = await allArticlesCounter.Get();
                 return (cleanArticles, count, Error.None);
@@ -71,7 +72,8 @@
             return idAuthor;
         }
 
-        private async Task<List<ArticleUserPair>> GetArticlesData(List<(long, string)> idAuthors)
+        public static async Task<List<ArticleUserPair>> 
+            GetArticlesData(IGrainFactory _factory, List<(long, string)> idAuthors)
         {
             
             var articleTasks = new List<Task<(Article article, Error error)>>(idAuthors.Count);
@@ -98,5 +100,8 @@
                 .Select(x => new ArticleUserPair(x.article, authors[x.article.Author]))
                 .ToList();
         }
+
+        #endregion
+
     }
 }
