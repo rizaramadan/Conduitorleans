@@ -21,12 +21,12 @@
         [HttpGet]
         public async Task<IActionResult> Get() 
         {
-            var tagsGrain = _client.GetGrain<ITagsGrain>(0);
-            (List<string> Tags, Error Error) = await tagsGrain.GetTags();
+            (List<string> Tags, Error Error) = await _client.GetGrain<ITagsGrain>(0).GetTags();
             if (Error.Exist()) 
             {
                 return UnprocessableEntity(Error);
             }
+
             return Ok( new { Tags } );
         }
     }

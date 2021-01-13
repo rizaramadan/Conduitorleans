@@ -12,6 +12,7 @@ using Contracts;
 using Conduit.Features.Users.Outputs;
 using Conduit.Infrastructure.Security;
 using Contracts.Users;
+using MediatR;
 
 namespace Conduit.Features.Users
 {
@@ -23,64 +24,38 @@ namespace Conduit.Features.Users
         private readonly IClusterClient _client;
         private readonly IJwtTokenGenerator _tokenGenerator;
         private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public UsersController(IClusterClient c, IJwtTokenGenerator g, IUserService s)
+        public UsersController(IClusterClient c, IJwtTokenGenerator g, IUserService s, IMediator m)
         {
             _client = c;
             _tokenGenerator = g;
             _userService = s;
+            _mediator = m;
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RegisterWrapper r)
         {
-            var userGrain = _client.GetGrain<IUserGrain>(r.User.Username);
-            var error = await userGrain.Register(r.User.Email, r.User.Password);
-            if (error.Exist())
+            (RegisterUserOutput Output, Error Error) = await _mediator.Send(r);
+            if (Error.Exist())
             {
-                return UnprocessableEntity(error);
+                return UnprocessableEntity(Error);
             }
 
-            var result = await userGrain.Get();
-            if (result.Error.Exist()) 
-            {
-                return UnprocessableEntity(result.Error);   
-            }
-            return Ok(new RegisterUserOutput(
-                userGrain.GetPrimaryKeyString(),
-                result.User.Email,
-                result.User.Bio,
-                result.User.Image,
-                await _tokenGenerator.CreateToken(userGrain.GetPrimaryKeyString())
-            ));
+            return Ok(Output);
         } 
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginWrapper l)
         {
-            var emailUserGrain = _client.GetGrain<IEmailUserGrain>(l.User.Email);
-            var (userId, error) = await emailUserGrain.GetUsername();
-            if (error.Exist())
+            (LoginUserOutput Output, Error Error) = await _mediator.Send(l);
+            if (Error.Exist())
             {
-                return UnprocessableEntity(error);
+                return UnprocessableEntity(Error);
             }
 
-            var user = _client.GetGrain<IUserGrain>(userId);
-            var errorLogin = await user.Login(l.User.Email, l.User.Password);
-            if (errorLogin.Exist())
-            {
-                return UnprocessableEntity(errorLogin);
-            }
-
-            return Ok(new LoginUserOutput(
-                user.GetPrimaryKeyString(),
-                l.User.Email,
-                //TODO: update bio feature
-                "some bio",
-                //TODO: update image feature
-                "some image",
-                await _tokenGenerator.CreateToken(user.GetPrimaryKeyString())
-            ));
+            return Ok(Output);
         }
     }
 }

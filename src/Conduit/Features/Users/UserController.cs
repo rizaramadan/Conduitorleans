@@ -17,42 +17,20 @@
     [Produces("application/json")]
     public class UserController : ControllerBase
     {
-        private readonly IClusterClient _client;
-        private readonly IJwtTokenGenerator _tokenGenerator;
-        private readonly IUserService _userService;
         private readonly IMediator _mediator;
 
-        public UserController(IClusterClient c, IJwtTokenGenerator g, IUserService s, IMediator m)
-        {
-            _client = c;
-            _tokenGenerator = g;
-            _userService = s;
-            _mediator = m;
-        }
+        public UserController(IMediator m) => _mediator = m;
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var (userId, error) = _userService.GetCurrentUsername();
-            if (error.Exist())
-            {
-                return UnprocessableEntity(error);
-            }
-
-            var userGrain = _client.GetGrain<IUserGrain>(userId);
-            (Contracts.Users.User User, Error Error) = await userGrain.Get();
+            (GetCurrentUserOutput Output, Error Error) = await _mediator.Send(new GetUser());
             if (Error.Exist())
             {
                 return UnprocessableEntity(Error);
             }
 
-            return Ok(new GetCurrentUserOutput(
-                userGrain.GetPrimaryKeyString(),
-                User.Email,
-                User.Bio,
-                User.Image,
-                await _tokenGenerator.CreateToken(userGrain.GetPrimaryKeyString())
-            ));
+            return Ok(Output);
         }
 
         [HttpPut]

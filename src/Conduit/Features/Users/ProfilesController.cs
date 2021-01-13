@@ -17,20 +17,17 @@
     {
         private readonly IClusterClient _client;
 
-        public ProfilesController(IClusterClient c)
-        {
-            _client = c;
-        }
+        public ProfilesController(IClusterClient c) => _client = c;
 
         [HttpGet("{username}")]
         public async Task<IActionResult> Get(string username)
         {
-            var userGrain = _client.GetGrain<IUserGrain>(username);
-            (User User, Error Error) = await userGrain.Get();
+            (User User, Error Error) = await _client.GetGrain<IUserGrain>(username).Get();
             if (Error.Exist())
             {
                 return UnprocessableEntity(Error);
             }
+
             return Ok(new Profile 
             {
                 Username  = username,
