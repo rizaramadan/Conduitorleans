@@ -16,10 +16,7 @@
     public class TagsController : ControllerBase
     {
         private readonly IClusterClient _client;
-        public TagsController(IClusterClient c)
-        {
-            _client = c;
-        }
+        public TagsController(IClusterClient c) => _client = c;
 
         [HttpGet]
         public async Task<IActionResult> Get() 
