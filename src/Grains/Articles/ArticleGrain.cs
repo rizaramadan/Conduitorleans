@@ -20,7 +20,7 @@
         private readonly IGrainFactory _factory;
 
         public ArticleGrain(
-            [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<Article> s,
+            [PersistentState(nameof(ArticleGrain), Constants.GrainStorage)] IPersistentState<Article> s,
             IGrainFactory f
         )
         {
