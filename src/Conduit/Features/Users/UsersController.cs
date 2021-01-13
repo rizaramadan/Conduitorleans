@@ -34,21 +34,24 @@ namespace Conduit.Features.Users
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RegisterWrapper r)
         {
-            var user = _client.GetGrain<IUserGrain>(r.User.Username);
-            var error = await user.Register(r.User.Email, r.User.Password);
+            var userGrain = _client.GetGrain<IUserGrain>(r.User.Username);
+            var error = await userGrain.Register(r.User.Email, r.User.Password);
             if (error.Exist())
             {
                 return UnprocessableEntity(error);
             }
 
+            var result = await userGrain.Get();
+            if (result.Error.Exist()) 
+            {
+                return UnprocessableEntity(result.Error);   
+            }
             return Ok(new RegisterUserOutput(
-                user.GetPrimaryKeyString(),
-                r.User.Email,
-                //TODO: update bio feature
-                "some bio",
-                //TODO: update image feature
-                "some image",
-                await _tokenGenerator.CreateToken(user.GetPrimaryKeyString())
+                userGrain.GetPrimaryKeyString(),
+                result.User.Email,
+                result.User.Bio,
+                result.User.Image,
+                await _tokenGenerator.CreateToken(userGrain.GetPrimaryKeyString())
             ));
         } 
 

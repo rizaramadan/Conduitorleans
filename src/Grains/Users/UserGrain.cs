@@ -14,6 +14,9 @@
         public static readonly Error UnregisteredUserLogin =
             new Error("d7a011a1-3f86-4797-b6ef-210b4b041121", "login of unregistered user");
 
+        public static readonly Error UnregisteredUserUpdate =
+            new Error("86AEFE6B-D99D-4168-95E1-94E6E330F390", "unregistered user want to update");
+
         public static readonly Error EmailPasswordMismatch =
             new Error("069e089f-1ff9-49a6-8821-7091ab9fa0a7", "email or password mismatch");
 
@@ -45,6 +48,35 @@
                 _userState.State?.Password?.Length > 0
             );
             return (result, Error.None);
+        }
+        public async Task<Error> Register(string email, string password)
+        {
+            var (hasRegistered, error) = await HasRegistered();
+            if (error.Exist())
+            {
+                return error;
+            }
+            if (hasRegistered)
+            {
+                return UserAlreadyRegistered;
+            }
+            try
+            {
+                _userState.State.Email = email;
+                var passwordHasher = _factory.GetGrain<IPasswordHasher>(0);
+                _userState.State.Salt = Guid.NewGuid();
+                _userState.State.Password =
+                    await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
+                await _userState.WriteStateAsync();
+                var emailUserGrain = _factory.GetGrain<IEmailUserGrain>(_userState.State.Email);
+                await emailUserGrain.SetUsername(this.GetPrimaryKeyString());
+                
+                return Error.None;
+            }
+            catch (Exception ex)
+            {
+                return new Error("b1890485-4204-4e1d-84d5-1eab7866dfbc", ex.Message);
+            }
         }
 
         public async Task<Error> Login(string email, string password)
@@ -80,34 +112,58 @@
             }
         }
 
-        public async Task<Error> Register(string email, string password)
+        public async Task<Error> Update(UpdateUser user) 
         {
             var (hasRegistered, error) = await HasRegistered();
             if (error.Exist())
             {
                 return error;
             }
-            if (hasRegistered)
+
+            if (!hasRegistered)
             {
-                return UserAlreadyRegistered;
+                return UnregisteredUserUpdate;
             }
-            try
+
+            if (!string.IsNullOrEmpty(user.Bio))
             {
-                _userState.State.Email = email;
+                _userState.State.Bio = user.Bio;
+            }
+            if (!string.IsNullOrEmpty(user.Image))
+            {
+                _userState.State.Image = user.Image;
+            }
+            if (!string.IsNullOrWhiteSpace(user.Password)) 
+            {
                 var passwordHasher = _factory.GetGrain<IPasswordHasher>(0);
-                _userState.State.Salt = Guid.NewGuid();
                 _userState.State.Password =
-                    await passwordHasher.Hash(password, _userState.State.Salt.ToByteArray());
-                await _userState.WriteStateAsync();
-                var emailUserGrain = _factory.GetGrain<IEmailUserGrain>(_userState.State.Email);
-                await emailUserGrain.SetUsername(this.GetPrimaryKeyString());
-                return Error.None;
+                    await passwordHasher.Hash(user.Password, _userState.State.Salt.ToByteArray());
             }
-            catch (Exception ex)
+
+            Task<Error> resetTask = null;
+            Task<Error> updateTask = null;
+            if (!string.IsNullOrWhiteSpace(user.Email))
             {
-                return new Error("b1890485-4204-4e1d-84d5-1eab7866dfbc", ex.Message);
+                var oldEmailUserGrain = _factory.GetGrain<IEmailUserGrain>(_userState.State.Email);
+                resetTask = oldEmailUserGrain.SetUsername(string.Empty);
+                var newEmailUserGrain = _factory.GetGrain<IEmailUserGrain>(user.Email);
+                updateTask = newEmailUserGrain.SetUsername(this.GetPrimaryKeyString());
+                _userState.State.Email = user.Email;
+                
             }
+
+            var saveChangesTask = _userState.WriteStateAsync();
+            if (resetTask != null && updateTask != null)
+            {
+                await Task.WhenAll(resetTask, updateTask, saveChangesTask);
+            }
+            else 
+            {
+                await saveChangesTask;
+            }
+            return Error.None;
         }
+
 
         public async Task<(string, Error)> GetEmail()
         {
