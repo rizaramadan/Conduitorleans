@@ -20,10 +20,13 @@ namespace Conduit.Features.Articles
     [Produces("application/json")]
     public class ArticlesController : ControllerBase
     {
+        private readonly IClusterClient _client;
         private readonly IMediator _mediator;
-        public ArticlesController(IMediator m)
+
+        public ArticlesController(IMediator m, IClusterClient c)
         {
             _mediator = m;
+            _client   = c;
         }
 
         [HttpGet]
@@ -56,6 +59,17 @@ namespace Conduit.Features.Articles
                 return UnprocessableEntity(Error);
             }
             return Ok(Output);
+        }
+
+        [HttpGet("{slug}")]
+        public async Task<IActionResult> Get(string slug)
+        {
+            (Article Article, Error Error) = await _client.GetGrain<ISlugGrain>(slug).GetArticle();
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+            return Ok(new { Article });
         }
     }
 }

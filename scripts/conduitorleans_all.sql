@@ -804,7 +804,11 @@ CREATE INDEX articles_index
     ON orleansstorage USING btree ((payloadjson ->> 'CreatedAt'::text) desc)
     INCLUDE (grainidn1, grainidextensionstring)
     WHERE ((graintypestring)::text = 'Grains.Articles.ArticleGrain,Grains.UserGrain'::text);
-
+    
+CREATE INDEX slug_index
+    ON orleansstorage using btree ((payloadjson->>'Slug'))
+    INCLUDE (grainidn1, grainidextensionstring)
+    WHERE graintypestring = 'Grains.Articles.ArticleGrain,Grains.ArticleGrain';
 
 --
 -- TOC entry 2722 (class 2606 OID 51225)

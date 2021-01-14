@@ -14,7 +14,7 @@
         {
             IdnMapping idn = new IdnMapping();
             string punyCode = idn.GetAscii(phrase);
-            return punyCode;
+            return punyCode?.Replace(' ','-')?.ToLower();
         }
 
         public static string RemoveDiacritics(this string text)
