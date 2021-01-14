@@ -73,7 +73,7 @@
                 return (null, error);
             }
 
-            (Article Article, Error Error) savedArticle = await grain.GetArticle();
+            (Article Article, Error Error) savedArticle = await grain.Get();
             if (savedArticle.Error.Exist())
             {
                 return (null, error);

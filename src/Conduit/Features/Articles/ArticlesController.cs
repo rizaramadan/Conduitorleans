@@ -1,20 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Conduit.Features.Articles.Inputs;
-using Conduit.Features.Articles.Outputs;
-using Microsoft.AspNetCore.Authorization;
-using Orleans;
-using Contracts.Articles;
-using Contracts.Users;
-using Contracts;
-using MediatR;
-
-namespace Conduit.Features.Articles
+﻿namespace Conduit.Features.Articles
 {
+    using Microsoft.AspNetCore.Mvc;
+    using System.Threading.Tasks;
+    using Conduit.Features.Articles.Inputs;
+    using Conduit.Features.Articles.Outputs;
+    using Microsoft.AspNetCore.Authorization;
+    using Orleans;
+    using Contracts.Articles;
+    using Contracts.Users;
+    using Contracts;
+    using MediatR;
+
     [Route("[controller]")]
     [ApiController]
     [Produces("application/json")]
@@ -85,6 +81,18 @@ namespace Conduit.Features.Articles
             }
 
             return Ok();
+        }
+
+        [HttpPut("{slug}")]
+        public async Task<IActionResult> Edit([FromRoute]string slug, [FromBody] UpdateArticleWrapper u)
+        {
+            (Article Article, Error Error) = await _mediator.Send(u.SetSlug(slug));
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+
+            return Ok( new { Article });
         }
     }
 }

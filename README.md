@@ -91,7 +91,7 @@ to have this up and running, steps are as follow:
 - [ ] [Feed articles](https://github.com/gothinkster/realworld/tree/master/api#feed-articles)
 - [x] [Get article](https://github.com/gothinkster/realworld/tree/master/api#get-article)
 - [x] [Create article](https://github.com/gothinkster/realworld/tree/master/api#create-article)
-- [ ] [Update article](https://github.com/gothinkster/realworld/tree/master/api#update-article) 
+- [x] [Update article](https://github.com/gothinkster/realworld/tree/master/api#update-article) 
 - [x] [Delete article](https://github.com/gothinkster/realworld/tree/master/api#delete-article)
 - [ ] [Add comments to article](https://github.com/gothinkster/realworld/tree/master/api#add-comments-to-an-article)
 - [ ] [Get comments from article](https://github.com/gothinkster/realworld/tree/master/api#get-comments-from-an-article)

@@ -14,7 +14,7 @@ namespace Contracts.Articles
         public DateTime UpdatedAt { get; set; }
         public string Description { get; set; }
         public List<string> TagList { get; set; }
-        public string Author { get; set; }
+        public Profile Author { get; set; }
         public List<string> Favorited { get; set; }
         public int FavoritesCount { get; set; }
     }

@@ -54,6 +54,11 @@
             }
         }
 
+        public async Task<(long ArticleId, string Author)> GetArticleId() 
+        {
+            return await Task.FromResult((ArticleId, Author));
+        }
+
         public async Task<(Article Article, Error Error)> GetArticle()
         {
             if (string.IsNullOrWhiteSpace(Author) || ArticleId == long.MinValue)
@@ -62,14 +67,14 @@
             }
 
             var articleGrain = _factory.GetGrain<IArticleGrain>(ArticleId, Author);
-            return await articleGrain.GetArticle();
+            return await articleGrain.Get();
         }
 
         public async Task<Error> DeleteArticle(string username)
         {
             var slug = this.GetPrimaryKeyString();
             var articleGrain = _factory.GetGrain<IArticleGrain>(ArticleId, Author);
-            (Article Article, Error Error) = await articleGrain.GetArticle();
+            (Article Article, Error Error) = await articleGrain.Get();
             if (Error.Exist())
             {
                 return Error;

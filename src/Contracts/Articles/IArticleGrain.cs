@@ -10,6 +10,7 @@ namespace Contracts.Articles
     {
         //TODO: create grain implementation
         Task<Error> CreateArticle(Article article);
-        Task<(Article Article, Error Error)> GetArticle();
+        Task<(Article Article, Error Error)> Get();
+        Task<Error> UpdateArticle(string title, string body, string description);
     }
 }

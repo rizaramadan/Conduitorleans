@@ -52,7 +52,7 @@
             _article.State.UpdatedAt = _article.State.CreatedAt;
             _article.State.Description = article.Description;
             _article.State.TagList = article.TagList;
-            _article.State.Author = username;
+            _article.State.Author = new Profile { Username = username };
             _article.State.Favorited = new List<string>(0);
             _article.State.FavoritesCount = 0;
             await _article.WriteStateAsync();
@@ -72,7 +72,7 @@
             await Task.WhenAll(taskList);
         }
 
-        public async Task<(Article Article, Error Error)> GetArticle()
+        public async Task<(Article Article, Error Error)> Get()
         {
             try
             {
@@ -82,6 +82,25 @@
             {
                 return await Task.FromResult<(Article, Error)>((null,new Error(ErrorGetGuid, ex.Message)));
             }
+        }
+
+        public async Task<Error> UpdateArticle(string title, string body, string description)
+        {
+            if (!string.IsNullOrEmpty(title))
+            {
+                _article.State.Title = title;
+                _article.State.Slug = title.GenerateSlug();
+            }
+            if (!string.IsNullOrEmpty(body))
+            {
+                _article.State.Body = body;
+            }
+            if (!string.IsNullOrEmpty(description))
+            {
+                _article.State.Description = description;
+            }
+            await _article.WriteStateAsync();
+            return Error.None;
         }
     }
 }

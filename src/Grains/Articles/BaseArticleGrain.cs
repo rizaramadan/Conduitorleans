@@ -24,7 +24,7 @@
             foreach (var each in list)
             {
                 var articleGrain = _factory.GetGrain<IArticleGrain>(each.ArticleId, each.Author);
-                articleTasks.Add(articleGrain.GetArticle());
+                articleTasks.Add(articleGrain.Get());
                 if (!authorSet.Contains(each.Author))
                 {
                     authorSet.Add(each.Author);
@@ -48,7 +48,7 @@
             }
 
             return articles.Where(x => !x.error.Exist())
-                .Select(x => new ArticleUserPair(x.article, authors[x.article.Author]))
+                .Select(x => new ArticleUserPair(x.article, authors[x.article.Author.Username]))
                 .ToList();
         }
 
