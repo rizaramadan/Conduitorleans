@@ -10,9 +10,8 @@
 
     public class CounterState
     {
-        public ulong Current { get; }
+        public ulong Current { get; set; }
         public CounterState() => Current = 0;
-        public CounterState(ulong value) => Current = value;
     }
 
     public class CounterGrain : Grain, ICounterGrain
@@ -31,7 +30,7 @@
             {
                 if (_counter.State.Current > 0)
                 {
-                    _counter.State = new CounterState(_counter.State.Current - 1);
+                    _counter.State.Current--;
                     await _counter.WriteStateAsync();
                     return Error.None;
                 }
@@ -52,7 +51,7 @@
         {
             try
             {
-                _counter.State = new CounterState(_counter.State.Current + 1);
+                _counter.State.Current++;
                 await _counter.WriteStateAsync();
                 return Error.None;
             }
