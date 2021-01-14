@@ -3,6 +3,7 @@
     using Conduit.Features.Articles.Outputs;
     using Contracts;
     using Contracts.Articles;
+    using Contracts.Users;
     using MediatR;
     using Orleans;
     using System;
@@ -59,19 +60,19 @@
                 TagList        = x.Article.TagList,
                 Favorited      = x.Article.Favorited,
                 FavoritesCount = x.Article.FavoritesCount,
-                Author         = new ArticleAuthor 
-                { 
-                    Username   = x.User.Username, 
-                    Bio        = x.User.Bio, 
-                    Image      = x.User.Image 
-                }
+                Author         = x.User
             };
             return output;
         };
 
         private readonly IClusterClient _client;
+        private readonly IUserService _userService;
 
-        public GetArticlesHandler(IClusterClient c) => _client = c;
+        public GetArticlesHandler(IClusterClient c, IUserService u)
+        {
+            _client = c;
+            _userService = u;
+        }
 
         public async Task<(GetArticlesOutput Output, Error Error)> 
             Handle(GetArticlesInput req, CancellationToken ct)
@@ -110,7 +111,13 @@
             GetAllArticles(int limit, int offset)
         {
             var grains = _client.GetGrain<IArticlesGrain>(0);
-            var result = await grains.GetHomeGuestArticles(limit, offset);
+            (string Username, Error Error) = _userService.GetCurrentUsername();
+            if (Error.Exist()) 
+            {
+                return (null, 0, Error);
+            }
+            
+            var result = await grains.GetHomeGuestArticles(Username, limit, offset);
             return result;
         }
 
@@ -118,7 +125,13 @@
             GetArticlesByTag(GetArticlesInput req)
         {
             var grains = _client.GetGrain<ITagArticlesGrain>(req.Tag);
-            var result = await grains.GetArticlesByTag(req.Limit.Value, req.Offset.Value);
+            (string Username, Error Error) = _userService.GetCurrentUsername();
+            if (Error.Exist())
+            {
+                return (null, 0, Error);
+            }
+
+            var result = await grains.GetArticlesByTag(Username, req.Limit.Value, req.Offset.Value);
             return result;
         }
     }

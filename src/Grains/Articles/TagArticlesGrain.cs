@@ -16,7 +16,7 @@
         public TagArticlesGrain(IGrainFactory f) : base(f) { }
 
         public async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
-            GetArticlesByTag(int limit, int offset)
+            GetArticlesByTag(string currentUser, int limit, int offset)
         {
             var tagGrain = _factory.GetGrain<ITagGrain>(this.GetPrimaryKeyString());
             (List<(long ArticleId, string Author)> ArticleIds, Error Error) tags =
@@ -26,7 +26,7 @@
                 .Take(limit)
                 .ToList();
 
-            var result = await GetArticlesData(latest);
+            var result = await GetArticlesData(currentUser, latest);
             var count = Convert.ToUInt64(tags.ArticleIds.Count);
             return (result, count, Error.None);
         }

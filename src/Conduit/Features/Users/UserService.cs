@@ -21,7 +21,7 @@ namespace Conduit.Infrastructure.Security
         {
             return
             (
-                _httpContextAccessor
+                _httpContextAccessor?
                 .HttpContext.User?
                 .Claims?
                 .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?

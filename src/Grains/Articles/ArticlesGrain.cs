@@ -20,7 +20,7 @@
             @"
                 SELECT grainidn1, grainidextensionstring 
                 FROM orleansstorage 
-                WHERE graintypestring = 'Grains.Articles.ArticleGrain,Grains.UserGrain' 
+                WHERE graintypestring = 'Grains.Articles.ArticleGrain,Grains.ArticleGrain' 
                 ORDER BY payloadjson->>'CreatedAt' DESC
                 LIMIT @limit
                 OFFSET @offset;
@@ -31,12 +31,13 @@
 
         public ArticlesGrain(IGrainFactory f) : base(f) { }
 
-        public async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> GetHomeGuestArticles(int limit, int offset)
+        public async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> 
+            GetHomeGuestArticles(string currentUser, int limit, int offset)
         {
             try
             {
                 var articlesAndAuthors = await GetArticlesId(limit, offset);
-                var cleanArticles = await GetArticlesData(articlesAndAuthors);
+                var cleanArticles = await GetArticlesData(currentUser, articlesAndAuthors);
                 var allArticlesCounter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
                 var count = await allArticlesCounter.Get();
                 return (cleanArticles, count, Error.None);

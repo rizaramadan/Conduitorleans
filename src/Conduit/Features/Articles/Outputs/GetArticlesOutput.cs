@@ -18,16 +18,9 @@ namespace Conduit.Features.Articles.Outputs
         public DateTime UpdatedAt { get; set; }
         public string Description { get; set; }
         public List<string> TagList { get; set; }
-        public ArticleAuthor Author { get; set; }
+        public Profile Author { get; set; }
         public List<string> Favorited { get; set; }
         public int FavoritesCount { get; set; }
-    }
-
-    public class ArticleAuthor 
-    {
-        public string Username { get; set; }
-        public string Bio { get; set; }
-        public string Image { get; set; }
     }
 
     public class GetArticlesOutput

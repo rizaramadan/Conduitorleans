@@ -9,7 +9,7 @@
     public interface IArticlesGrain : IGrainWithIntegerKey
     {
         public Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
-            GetHomeGuestArticles(int limit, int offset);
+            GetHomeGuestArticles(string currentUser, int limit, int offset);
 
         
     }
