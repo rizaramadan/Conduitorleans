@@ -75,6 +75,33 @@ to have this up and running, steps are as follow:
 4. start [/src/SiloHost](https://github.com/rizaramadan/Conduitorleans/tree/main/src/SiloHost) project first, after its up and running
 5. start the [/src/Conduit](https://github.com/rizaramadan/Conduitorleans/tree/main/src/Conduit)
 
+# Work Progress Status
+- [x] [Authentication](https://github.com/gothinkster/realworld/tree/master/api#authentication)
+- [x] [Registration](https://github.com/gothinkster/realworld/tree/master/api#registration)
+- [x] [Get current user](https://github.com/gothinkster/realworld/tree/master/api#get-current-user)
+- [x] [Update user](https://github.com/gothinkster/realworld/tree/master/api#update-user). Implemented with limitation, that is user cannot change username. [More explanation here](https://github.com/rizaramadan/Conduitorleans/commit/5e3c57cbdf9f7bd601d9da0d6c1ba8fd992cd199)
+- [x] [Get profile](https://github.com/gothinkster/realworld/tree/master/api#get-profile)
+- [x] [Follow user](https://github.com/gothinkster/realworld/tree/master/api#follow-user)
+- [x] [Unfollow user](https://github.com/gothinkster/realworld/tree/master/api#unfollow-user)
+- [ ] [List articles](https://github.com/gothinkster/realworld/tree/master/api#list-articles)
+    - [x] all articles
+    - [x] article by tag    
+    - [ ] favorited
+    - [ ] by author
+- [ ] [Feed articles](https://github.com/gothinkster/realworld/tree/master/api#feed-articles)
+- [ ] [Get article](https://github.com/gothinkster/realworld/tree/master/api#get-article)
+- [ ] [Create article](https://github.com/gothinkster/realworld/tree/master/api#create-article)
+- [ ] [Update article](https://github.com/gothinkster/realworld/tree/master/api#update-article) 
+- [ ] [Delete article](https://github.com/gothinkster/realworld/tree/master/api#delete-article)
+- [ ] [Add comments to article](https://github.com/gothinkster/realworld/tree/master/api#add-comments-to-an-article)
+- [ ] [Get comments from article](https://github.com/gothinkster/realworld/tree/master/api#get-comments-from-an-article)
+- [ ] [Delete comment](https://github.com/gothinkster/realworld/tree/master/api#delete-comment)
+- [ ] [Favorit article](https://github.com/gothinkster/realworld/tree/master/api#favorite-article)
+- [ ] [Unfavorite article](https://github.com/gothinkster/realworld/tree/master/api#unfavorite-article)
+- [x] [Get tags](https://github.com/gothinkster/realworld/tree/master/api#unfavorite-article)
+
+
+
 ### Footnote
 Copy many codes from [an awesome conduit implementation using ASP.NET Core](https://github.com/gothinkster/aspnetcore-realworld-example-app).
 Please check that repository, many things done right and much to learn from it.
