@@ -10,8 +10,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using PersistenceState =
-        Orleans.Runtime.IPersistentState<System.Collections.Immutable.ImmutableList<string>>;
-
+        Orleans.Runtime.IPersistentState<System.Collections.Generic.HashSet<string>>;
     public class UserFollowersGrain : Grain, IUserFollowersGrain
     {
         private readonly PersistenceState _followers;
@@ -30,13 +29,14 @@
         {
             if (_followers.State == null)
             {
-                var builder = ImmutableList.CreateBuilder<string>();
-                builder.Add(username);
-                _followers.State = builder.ToImmutable();
+                _followers.State = new HashSet<string>
+                {
+                    username
+                };
             }
             else
             {
-                _followers.State = _followers.State.Add(username);
+                _followers.State.Add(username);
             }
 
             await _followers.WriteStateAsync();
@@ -47,7 +47,7 @@
         {
             if (_followers.State != null && _followers.State.Contains(username))
             {
-                _followers.State = _followers.State.Remove(username);
+                _followers.State.Remove(username);
             }
 
             await _followers.WriteStateAsync();

@@ -175,8 +175,9 @@
             var user = new User
             {
                 Username = this.GetPrimaryKeyString(),
-                Image = _userState.State.Image,
-                Bio = _userState.State.Bio
+                Image    = _userState.State.Image,
+                Bio      = _userState.State.Bio,
+                Email    = _userState.State.Email
             };
             return await Task.FromResult((user, Error.None));
         }

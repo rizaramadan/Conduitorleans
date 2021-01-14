@@ -46,7 +46,7 @@
                     Username = User.Username,
                     Bio = User.Bio,
                     Image = User.Image,
-                    Following = false
+                    Following = await followingGrain.IsFollow(username)
                 },
                 Error.None
             );

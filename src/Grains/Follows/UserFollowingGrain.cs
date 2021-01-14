@@ -1,4 +1,6 @@
-﻿namespace Grains.Follows
+﻿using System.Collections.Generic;
+
+namespace Grains.Follows
 {
     using Contracts;
     using Contracts.Follows;
@@ -8,7 +10,7 @@
     using System.Threading.Tasks;
 
     using PersistenceState = 
-        Orleans.Runtime.IPersistentState<System.Collections.Immutable.ImmutableList<string>>;
+        Orleans.Runtime.IPersistentState<HashSet<string>>;
 
     public class UserFollowingGrain : Grain, IUserFollowingGrain
     {
@@ -24,17 +26,23 @@
             _factory = f;
         }
 
+        public async Task<bool> IsFollow(string username)
+        {
+            return await Task.FromResult(_following.State.Contains(username));
+        }
+
         public async Task<Error> Follow(string username)
         {
             if (_following.State == null)
             {
-                var builder = ImmutableList.CreateBuilder<string>();
-                builder.Add(username);
-                _following.State = builder.ToImmutable();
+                _following.State = new HashSet<string>
+                {
+                    username
+                };
             }
             else 
             {
-                _following.State = _following.State.Add(username);
+                _following.State.Add(username);
             }
 
             var followers = _factory.GetGrain<IUserFollowersGrain>(username);
@@ -47,7 +55,7 @@
         {
             if (_following.State != null && _following.State.Contains(username))
             {
-                _following.State = _following.State.Remove(username);
+                _following.State.Remove(username);
             }
 
             var followers = _factory.GetGrain<IUserFollowersGrain>(username);

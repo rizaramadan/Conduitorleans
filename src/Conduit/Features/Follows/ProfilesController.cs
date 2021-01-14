@@ -51,7 +51,7 @@
                 return UnprocessableEntity(Error);
             }
 
-            return Ok(Profile);
+            return Ok(new { Profile });
         }
 
         [HttpDelete("{username}/follow")]
@@ -63,7 +63,7 @@
                 return UnprocessableEntity(Error);
             }
 
-            return Ok(Profile);
+            return Ok(new { Profile });
         }
     }
 }

@@ -33,8 +33,6 @@
         public Register User { get; set; }
     }
 
-
-
     public class RegisterWrapperHandler :
         IRequestHandler<RegisterWrapper, (RegisterUserOutput Output, Error Error)>
     {
