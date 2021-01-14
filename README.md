@@ -92,7 +92,7 @@ to have this up and running, steps are as follow:
 - [x] [Get article](https://github.com/gothinkster/realworld/tree/master/api#get-article)
 - [x] [Create article](https://github.com/gothinkster/realworld/tree/master/api#create-article)
 - [ ] [Update article](https://github.com/gothinkster/realworld/tree/master/api#update-article) 
-- [ ] [Delete article](https://github.com/gothinkster/realworld/tree/master/api#delete-article)
+- [x] [Delete article](https://github.com/gothinkster/realworld/tree/master/api#delete-article)
 - [ ] [Add comments to article](https://github.com/gothinkster/realworld/tree/master/api#add-comments-to-an-article)
 - [ ] [Get comments from article](https://github.com/gothinkster/realworld/tree/master/api#get-comments-from-an-article)
 - [ ] [Delete comment](https://github.com/gothinkster/realworld/tree/master/api#delete-comment)

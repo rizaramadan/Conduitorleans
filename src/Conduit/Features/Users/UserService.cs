@@ -17,17 +17,14 @@ namespace Conduit.Infrastructure.Security
         {
             _httpContextAccessor = httpContextAccessor;
         }
-        public (string Username, Error Error) GetCurrentUsername()
+        public string GetCurrentUsername()
         {
             return
-            (
                 _httpContextAccessor?
                 .HttpContext.User?
                 .Claims?
                 .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?
-                .Value,
-                Error.None
-            );
+                .Value;
         }
     }
 }

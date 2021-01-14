@@ -111,13 +111,8 @@
             GetAllArticles(int limit, int offset)
         {
             var grains = _client.GetGrain<IArticlesGrain>(0);
-            (string Username, Error Error) = _userService.GetCurrentUsername();
-            if (Error.Exist()) 
-            {
-                return (null, 0, Error);
-            }
-            
-            var result = await grains.GetHomeGuestArticles(Username, limit, offset);
+            var username = _userService.GetCurrentUsername();
+            var result = await grains.GetHomeGuestArticles(username, limit, offset);
             return result;
         }
 
@@ -125,13 +120,8 @@
             GetArticlesByTag(GetArticlesInput req)
         {
             var grains = _client.GetGrain<ITagArticlesGrain>(req.Tag);
-            (string Username, Error Error) = _userService.GetCurrentUsername();
-            if (Error.Exist())
-            {
-                return (null, 0, Error);
-            }
-
-            var result = await grains.GetArticlesByTag(Username, req.Limit.Value, req.Offset.Value);
+            var username = _userService.GetCurrentUsername();
+            var result = await grains.GetArticlesByTag(username, req.Limit.Value, req.Offset.Value);
             return result;
         }
     }

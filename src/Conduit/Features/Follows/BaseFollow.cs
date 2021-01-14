@@ -22,8 +22,8 @@
 
         public async Task<(Profile Profile, Error Error)> BaseHandle(string username, CancellationToken ct)
         {
-            (string Username, Error Error) me = _userService.GetCurrentUsername();
-            var followingGrain = _client.GetGrain<IUserFollowingGrain>(me.Username);
+            var me = _userService.GetCurrentUsername();
+            var followingGrain = _client.GetGrain<IUserFollowingGrain>(me);
             Task<Error> followingTask = Process(username, followingGrain);
             var getUserTask = _client.GetGrain<IUserGrain>(username).Get();
             await Task.WhenAll(followingTask, getUserTask);

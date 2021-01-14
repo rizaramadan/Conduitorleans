@@ -3,15 +3,17 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Linq;
     using System.Threading.Tasks;
     using Contracts;
     using Contracts.Articles;
     using Npgsql;
     using Orleans;
+    using Contracts.Tags;
 
     public class SlugGrain : Grain, ISlugGrain
     {
-        private const string Query =
+        private const string QueryOnActivate =
             @"
                 SELECT grainidn1, grainidextensionstring
                 FROM orleansstorage
@@ -19,9 +21,18 @@
                   AND graintypestring = 'Grains.Articles.ArticleGrain,Grains.ArticleGrain'
                 LIMIT 1;
             ";
-        private const string SlugParam = "@slug";
 
-        private long ArticleId { get; set; }
+        private const string QueryOnDelete =
+            @"
+                DELETE FROM orleansstorage
+                WHERE (payloadjson->>'Slug') = @slug
+                  AND (payloadjson->>'Author') = @author
+                  AND graintypestring = 'Grains.Articles.ArticleGrain,Grains.ArticleGrain';
+            ";
+        private const string SlugParam = "@slug";
+        private const string AuthorParam = "@author";
+
+        private long ArticleId { get; set; } = long.MinValue;
         private string Author { get; set; }
         private readonly IGrainFactory _factory;
         
@@ -33,7 +44,7 @@
             await using var conn = new NpgsqlConnection(Constants.ConnStr);
             await conn.OpenAsync();
 
-            await using var cmd = new NpgsqlCommand(Query, conn);
+            await using var cmd = new NpgsqlCommand(QueryOnActivate, conn);
             cmd.Parameters.AddWithValue(SlugParam, slug);
             await using var reader = await cmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
@@ -45,8 +56,53 @@
 
         public async Task<(Article Article, Error Error)> GetArticle()
         {
+            if (string.IsNullOrWhiteSpace(Author) || ArticleId == long.MinValue)
+            {
+                return (null, new Error("D23749EE-EF65-4D44-B40C-0D5B2D28A135", "article not found"));
+            }
+
             var articleGrain = _factory.GetGrain<IArticleGrain>(ArticleId, Author);
             return await articleGrain.GetArticle();
+        }
+
+        public async Task<Error> DeleteArticle(string username)
+        {
+            var slug = this.GetPrimaryKeyString();
+            var articleGrain = _factory.GetGrain<IArticleGrain>(ArticleId, Author);
+            (Article Article, Error Error) = await articleGrain.GetArticle();
+            if (Error.Exist())
+            {
+                return Error;
+            }
+
+            var tasks = new List<Task<Error>>();
+            foreach (var tag in Article.TagList ?? Enumerable.Empty<string>())
+            {
+                var tagGrain = _factory.GetGrain<ITagGrain>(tag);
+                tasks.Add(tagGrain.RemoveArticle(ArticleId, Author));
+            }
+            var counter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
+            tasks.Add(counter.Decreement());
+            var task = DeleteStorage(slug, username);
+            tasks.Add(task);
+            await Task.WhenAll(task);
+            return await task;
+        }
+
+        private async Task<Error> DeleteStorage(string slug, string username) 
+        {
+            await using var conn = new NpgsqlConnection(Constants.ConnStr);
+            await conn.OpenAsync();
+
+            await using var cmd = new NpgsqlCommand(QueryOnDelete, conn);
+            cmd.Parameters.AddWithValue(SlugParam, slug);
+            cmd.Parameters.AddWithValue(AuthorParam, username);
+            var row = await cmd.ExecuteNonQueryAsync();
+            if (row == 1)
+            {
+                return Error.None;
+            }
+            return new Error("B20A94FD-71DA-4A8C-B1A1-43B5CAC76503", $"unexpectedly {row} row(s) affected");
         }
     }
 }

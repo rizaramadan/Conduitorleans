@@ -52,11 +52,7 @@
         public async Task<(CreateArticleOutput Output, Error Error)> 
             Handle(CreateArticleInput req, CancellationToken ct)
         {
-            var (username, error) = _userService.GetCurrentUsername();
-            if (error.Exist())
-            {
-                return (null, error);
-            }
+            var username = _userService.GetCurrentUsername();
 
             /// The key of article is compound of long and string. 
             /// integer is filled with yyyyMMddHHmmss parse as long
@@ -65,7 +61,7 @@
             /// its still a reasonable limitation
             var key = long.Parse(DateTime.Now.ToString(KeyFormat));
             var grain = _client.GetGrain<IArticleGrain>(key, username);
-            error = await grain.CreateArticle(new Article
+            var error = await grain.CreateArticle(new Article
             {
                 Title       = req.Article.Title,
                 Body        = req.Article.Body,

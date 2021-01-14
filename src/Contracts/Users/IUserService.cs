@@ -4,6 +4,6 @@ namespace Contracts.Users
 {
     public interface IUserService
     {
-        (string Username, Error Error) GetCurrentUsername();
+        string GetCurrentUsername();
     }
 }

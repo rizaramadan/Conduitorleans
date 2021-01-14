@@ -28,12 +28,7 @@
 
         public async Task<(GetCurrentUserOutput, Error Error)> Handle(GetUser req, CancellationToken ct)
         {
-            var (userId, error) = _userService.GetCurrentUsername();
-            if (error.Exist())
-            {
-                return (null, error);
-            }
-
+            var userId = _userService.GetCurrentUsername();
             var userGrain = _client.GetGrain<IUserGrain>(userId);
             (Contracts.Users.User User, Error Error) = await userGrain.Get();
             if (Error.Exist())

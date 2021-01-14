@@ -22,11 +22,13 @@ namespace Conduit.Features.Articles
     {
         private readonly IClusterClient _client;
         private readonly IMediator _mediator;
+        private readonly IUserService _userService;
 
-        public ArticlesController(IMediator m, IClusterClient c)
+        public ArticlesController(IMediator m, IClusterClient c, IUserService u)
         {
             _mediator = m;
             _client   = c;
+            _userService = u;
         }
 
         [HttpGet]
@@ -70,6 +72,19 @@ namespace Conduit.Features.Articles
                 return UnprocessableEntity(Error);
             }
             return Ok(new { Article });
+        }
+
+        [HttpDelete("{slug}")]
+        public async Task<IActionResult> Delete(string slug)
+        {
+            Error Error =
+                await _client.GetGrain<ISlugGrain>(slug).DeleteArticle(_userService.GetCurrentUsername());
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+
+            return Ok();
         }
     }
 }

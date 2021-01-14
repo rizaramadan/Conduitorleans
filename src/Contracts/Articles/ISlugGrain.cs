@@ -6,5 +6,6 @@
     public interface ISlugGrain : IGrainWithStringKey
     {
         Task<(Article Article, Error Error)> GetArticle();
+        Task<Error> DeleteArticle(string username);
     }
 }
