@@ -10,6 +10,7 @@
     using Contracts.Users;
     using Contracts;
     using MediatR;
+    using Conduit.Features.Articles.Favorites;
 
     [Route("[controller]")]
     [ApiController]
@@ -93,6 +94,32 @@
             }
 
             return Ok( new { Article });
+        }
+
+        [Authorize]
+        [HttpPost("{slug}/favorite")]
+        public async Task<IActionResult> Favorite([FromRoute]string slug)
+        {
+            (Article Article, Error Error) = await _mediator.Send(new Favorite(slug));
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+
+            return Ok(new { Article });
+        }
+
+        [Authorize]
+        [HttpDelete("{slug}/favorite")]
+        public async Task<IActionResult> Unfavorite([FromRoute] string slug)
+        {
+            (Article Article, Error Error) = await _mediator.Send(new Unfavorite(slug));
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+
+            return Ok(new { Article });
         }
     }
 }

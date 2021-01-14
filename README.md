@@ -96,8 +96,8 @@ to have this up and running, steps are as follow:
 - [ ] [Add comments to article](https://github.com/gothinkster/realworld/tree/master/api#add-comments-to-an-article)
 - [ ] [Get comments from article](https://github.com/gothinkster/realworld/tree/master/api#get-comments-from-an-article)
 - [ ] [Delete comment](https://github.com/gothinkster/realworld/tree/master/api#delete-comment)
-- [ ] [Favorit article](https://github.com/gothinkster/realworld/tree/master/api#favorite-article)
-- [ ] [Unfavorite article](https://github.com/gothinkster/realworld/tree/master/api#unfavorite-article)
+- [x] [Favorit article](https://github.com/gothinkster/realworld/tree/master/api#favorite-article)
+- [x] [Unfavorite article](https://github.com/gothinkster/realworld/tree/master/api#unfavorite-article)
 - [x] [Get tags](https://github.com/gothinkster/realworld/tree/master/api#unfavorite-article)
 
 

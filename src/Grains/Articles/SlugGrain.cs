@@ -54,7 +54,7 @@
             }
         }
 
-        public async Task<(long ArticleId, string Author)> GetArticleId() 
+        public async Task<(long ArticleId, string Author)> GetArticleId()
         {
             return await Task.FromResult((ArticleId, Author));
         }
