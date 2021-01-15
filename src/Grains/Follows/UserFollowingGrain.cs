@@ -63,5 +63,10 @@ namespace Grains.Follows
             await Task.WhenAll(_following.WriteStateAsync(), followersTask);
             return Error.None;
         }
+
+        public async Task<(HashSet<string> Following, Error Error)> Get()
+        {
+            return await Task.FromResult((_following.State, Error.None));
+        }
     }
 }

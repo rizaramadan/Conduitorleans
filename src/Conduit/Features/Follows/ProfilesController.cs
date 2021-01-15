@@ -33,13 +33,14 @@
                 return UnprocessableEntity(Error);
             }
 
-            return Ok(new Profile 
+            var profile = new Profile
             {
-                Username  = username,
-                Bio       = User.Bio,
-                Image     = User.Image,
+                Username = username,
+                Bio = User.Bio,
+                Image = User.Image,
                 Following = false
-            });
+            };
+            return Ok(new { profile });
         }
 
         [HttpPost("{username}/follow")]

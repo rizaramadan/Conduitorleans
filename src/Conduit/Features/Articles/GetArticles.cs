@@ -19,6 +19,7 @@
         public string Tag { get; set; }
         public string Author { get; set; }
         public string Favorited { get; set; }
+        public bool Feed { get; set; }
         private int? _limit;
         public int? Limit 
         {
@@ -35,12 +36,14 @@
         public bool AllAtricles() => 
             string.IsNullOrWhiteSpace(Tag) 
             && string.IsNullOrWhiteSpace(Author)
-            && string.IsNullOrWhiteSpace(Favorited);
+            && string.IsNullOrWhiteSpace(Favorited)
+            && !Feed;
 
         internal bool ExistTagOnly() =>
             !string.IsNullOrWhiteSpace(Tag)
             && string.IsNullOrWhiteSpace(Author)
-            && string.IsNullOrWhiteSpace(Favorited);
+            && string.IsNullOrWhiteSpace(Favorited)
+            && !Feed;
     }
 
     public class GetArticlesHandler : IRequestHandler<GetArticlesInput, 
@@ -84,7 +87,9 @@
                     await GetAllArticles(req.Limit.Value, req.Offset.Value)
                     : req.ExistTagOnly() ?
                         await GetArticlesByTag(req)
-                        : (null, 0, Error.None);
+                        : req.Feed ?
+                            await GetFeed(req.Limit.Value, req.Offset.Value)
+                            : (null, 0, Error.None);
 
                 if (result.Error.Exist())
                 {
@@ -107,6 +112,8 @@
             }
         }
 
+        
+
         private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> 
             GetAllArticles(int limit, int offset)
         {
@@ -122,6 +129,15 @@
             var grains = _client.GetGrain<ITagArticlesGrain>(req.Tag);
             var username = _userService.GetCurrentUsername();
             var result = await grains.GetArticlesByTag(username, req.Limit.Value, req.Offset.Value);
+            return result;
+        }
+
+        private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> 
+            GetFeed(int limit, int offset)
+        {
+            var username = _userService.GetCurrentUsername();
+            var grains = _client.GetGrain<IFeedGrain>(username);
+            var result = await grains.Get(username, limit, offset);
             return result;
         }
     }

@@ -12,5 +12,9 @@ namespace Contracts.Articles
         Task<Error> CreateArticle(Article article);
         Task<(Article Article, Error Error)> Get();
         Task<Error> UpdateArticle(string title, string body, string description);
+
+        Task<Error> AddFavorited(string user);
+
+        Task<Error> RemoveFavorited(string user);
     }
 }

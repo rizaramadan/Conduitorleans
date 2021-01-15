@@ -14,8 +14,17 @@
         {
             IdnMapping idn = new IdnMapping();
             string punyCode = idn.GetAscii(phrase);
-            string postfix = new Guid().ToString("N").Substring(0, 4).ToLower();
-            return punyCode?.Replace(' ','-')?.ToLower() + postfix;
+            string infix = RandomString(2);
+            string postfix = RandomString(4);
+            return $"{punyCode?.Replace(' ','-')?.ToLower()}-{infix}-{postfix}";
+        }
+
+        private static Random random = new Random();
+        public static string RandomString(int length)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         public static string RemoveDiacritics(this string text)

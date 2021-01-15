@@ -48,6 +48,8 @@
             {
                 _favoritState.State = new HashSet<ArticleIdentity>(1);
             }
+            var articleGrain = _factory.GetGrain<IArticleGrain>(ArticleId, Author);
+            await articleGrain.AddFavorited(Author);
             _favoritState.State.Add(new ArticleIdentity { Id = ArticleId, Author = Author });
             return (ArticleId, Author, Error.None);
         }
@@ -60,6 +62,8 @@
             {
                 _favoritState.State.Remove(new ArticleIdentity { Id = ArticleId, Author = Author });
             }
+            var articleGrain = _factory.GetGrain<IArticleGrain>(ArticleId, Author);
+            await articleGrain.RemoveFavorited(Author);
             return (ArticleId, Author, Error.None);
         }
     }

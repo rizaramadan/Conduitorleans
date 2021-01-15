@@ -53,13 +53,12 @@
             _article.State.Description = article.Description;
             _article.State.TagList = article.TagList;
             _article.State.Author = new Profile { Username = username };
-            _article.State.Favorited = new List<string>(0);
-            _article.State.FavoritesCount = 0;
+            _article.State.Favorited = false;
             await _article.WriteStateAsync();
             var counter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
             var countTask = counter.Increement();
             var userArticles = _factory.GetGrain<IUserArticlesGrain>(username);
-            var userTask = userArticles.AddArticle(this.GetPrimaryKeyLong());
+            var userTask = userArticles.AddArticle(this.GetPrimaryKeyLong(out var ext));
             await Task.WhenAll(countTask, userTask);
         }
 
@@ -102,6 +101,24 @@
             {
                 _article.State.Description = description;
             }
+            await _article.WriteStateAsync();
+            return Error.None;
+        }
+
+        public async Task<Error> AddFavorited(string user)
+        {
+            if (_article.State.Favorites == null) 
+            {
+                _article.State.Favorites = new List<string>(1);
+            }
+            _article.State.Favorites.Add(user);
+            await _article.WriteStateAsync();
+            return Error.None;
+        }
+
+        public async Task<Error> RemoveFavorited(string user)
+        {
+            _article.State.Favorites.RemoveAll(x => x.Equals(user));
             await _article.WriteStateAsync();
             return Error.None;
         }

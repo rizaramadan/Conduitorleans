@@ -88,7 +88,7 @@ to have this up and running, steps are as follow:
     - [x] article by tag    
     - [ ] favorited
     - [ ] by author
-- [ ] [Feed articles](https://github.com/gothinkster/realworld/tree/master/api#feed-articles)
+- [x] [Feed articles](https://github.com/gothinkster/realworld/tree/master/api#feed-articles)
 - [x] [Get article](https://github.com/gothinkster/realworld/tree/master/api#get-article)
 - [x] [Create article](https://github.com/gothinkster/realworld/tree/master/api#create-article)
 - [x] [Update article](https://github.com/gothinkster/realworld/tree/master/api#update-article) 

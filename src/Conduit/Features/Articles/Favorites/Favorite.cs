@@ -21,7 +21,9 @@ namespace Conduit.Features.Articles.Favorites
 
         public async Task<(Article Article, Error Error)> Handle(Favorite req, CancellationToken ct)
         {
-            return await HandleBase(req.Slug, ct);
+            (Article Article, Error Error) result = await HandleBase(req.Slug, ct);
+            result.Article.Favorited = true;
+            return result;
         }
 
         protected override Task<(long ArticleId, string Author, Error Error)> Process(IFavoritGrain g, string s)

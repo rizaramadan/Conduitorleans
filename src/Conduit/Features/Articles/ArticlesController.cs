@@ -11,6 +11,7 @@
     using Contracts;
     using MediatR;
     using Conduit.Features.Articles.Favorites;
+    using System.Collections.Generic;
 
     [Route("[controller]")]
     [ApiController]
@@ -124,9 +125,19 @@
 
         [Authorize]
         [HttpGet("feed")]
-        public async Task<IActionResult> Feed([FromQuery] int limit, [FromQuery] int offset) 
+        public async Task<IActionResult> Feed([FromQuery] int? limit, [FromQuery] int? offset) 
         {
-        
+            (GetArticlesOutput Output, Error Error) = await _mediator.Send(new GetArticlesInput
+            {
+                Feed = true,
+                Limit = limit,
+                Offset = offset
+            });
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+            return Ok(Output);
         }
     }
 }

@@ -43,11 +43,13 @@
             return Error.None;
         }
 
-        public async Task<(List<long> ArticleId, Error Error)> GetLatestArticle(int limit)
+        public async Task<(List<long> ArticleId, string Auhtor, Error Error)> GetLatestArticle(int limit)
         {
             var result = _articles.State.ToList();
             return await Task.FromResult(
-                (result.OrderByDescending(x => x).Take(limit).ToList(), Error.None));
+                (result.OrderByDescending(x => x).Take(limit).ToList()
+                 , this.GetPrimaryKeyString()
+                 , Error.None));
         }
     }
 }
