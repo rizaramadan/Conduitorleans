@@ -88,6 +88,10 @@
             }
             var counter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
             tasks.Add(counter.Decreement());
+            
+            var userArticles = _factory.GetGrain<IUserArticlesGrain>(username);
+            tasks.Add(userArticles.RemoveArticle(ArticleId));
+            
             var task = DeleteStorage(slug, username);
             tasks.Add(task);
             await Task.WhenAll(task);

@@ -121,5 +121,12 @@
 
             return Ok(new { Article });
         }
+
+        [Authorize]
+        [HttpGet("feed")]
+        public async Task<IActionResult> Feed([FromQuery] int limit, [FromQuery] int offset) 
+        {
+        
+        }
     }
 }

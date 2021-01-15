@@ -57,7 +57,10 @@
             _article.State.FavoritesCount = 0;
             await _article.WriteStateAsync();
             var counter = _factory.GetGrain<ICounterGrain>(nameof(IArticleGrain));
-            await counter.Increement();
+            var countTask = counter.Increement();
+            var userArticles = _factory.GetGrain<IUserArticlesGrain>(username);
+            var userTask = userArticles.AddArticle(this.GetPrimaryKeyLong());
+            await Task.WhenAll(countTask, userTask);
         }
 
         private async Task AddArticleToTags(Article article, long articleId, string username)
