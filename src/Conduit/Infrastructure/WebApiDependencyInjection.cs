@@ -1,4 +1,5 @@
-﻿using Conduit.Infrastructure.Security;
+﻿using Conduit.Features.Articles;
+using Conduit.Infrastructure.Security;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -25,6 +26,8 @@ namespace Conduit.Infrastructure
                 {
                     cfg.RegisterValidatorsFromAssemblyContaining<Startup>();
                 });
+
+            services.AddScoped<IArticleService, ArticleService>();
         }
     }
 }

@@ -11,5 +11,7 @@
         Task<Error> AddArticle(long articleId);
         Task<Error> RemoveArticle(long articleId);
         Task<(List<long> ArticleId, string Auhtor, Error Error)> GetLatestArticle(int limit);
+        Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> 
+            GetLatestArticlePair(string currentUser, int limit, int offset);
     }
 }

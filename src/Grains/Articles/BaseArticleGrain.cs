@@ -52,7 +52,7 @@
                 .ToList();
         }
 
-        private async Task AddFollowingInfo(string currentUser, Dictionary<string, Profile> authors)
+        protected async Task AddFollowingInfo(string currentUser, Dictionary<string, Profile> authors)
         {
             var articleAuthors = authors.Keys.OrderBy(x => x).ToList();
             var followingTask = new List<Task<bool>>(articleAuthors.Count);

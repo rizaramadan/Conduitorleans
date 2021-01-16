@@ -12,18 +12,16 @@
 
     using PersistenceState = Orleans.Runtime.IPersistentState<System.Collections.Generic.HashSet<long>>;
 
-    public class UserArticlesGrain : Grain, IUserArticlesGrain
+    public class UserArticlesGrain : BaseArticleGrain, IUserArticlesGrain
     {
         private readonly PersistenceState _articles;
-        private readonly IGrainFactory _factory;
 
         public UserArticlesGrain(
             [PersistentState(nameof(UserArticlesGrain), Constants.GrainStorage)] PersistenceState s,
             IGrainFactory f
-        )
+        ) : base(f)
         {
             _articles = s;
-            _factory = f;
         }
 
         public async Task<Error> AddArticle(long articleId)
@@ -50,6 +48,25 @@
                 (result.OrderByDescending(x => x).Take(limit).ToList()
                  , this.GetPrimaryKeyString()
                  , Error.None));
+        }
+
+        public async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
+            GetLatestArticlePair(string currentUser, int limit, int offset)
+        {
+            if (_articles.State == null)
+            {
+                return (null, 0, Error.None);
+            }
+
+            var list = _articles.State
+                .Select(x => (x, this.GetPrimaryKeyString()))
+                .ToList();
+            var filtered = list.OrderByDescending(x => x)
+                .Take(limit)
+                .Skip(offset)
+                .ToList();
+            var filteredResult = await GetArticlesData(currentUser, list);
+            return (filteredResult, Convert.ToUInt64(list.Count), Error.None);
         }
     }
 }

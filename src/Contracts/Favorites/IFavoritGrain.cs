@@ -1,5 +1,6 @@
 ﻿namespace Contracts.Favorites
 {
+    using Contracts.Articles;
     using Orleans;
     using System;
     using System.Collections.Generic;
@@ -10,5 +11,8 @@
     {
         Task<(long ArticleId, string Author, Error Error)> Favorite(string slug);
         Task<(long ArticleId, string Author, Error Error)> Unfavorite(string slug);
+
+        Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
+            GetArticles(string currentUser, int limit, int offset);
     }
 }

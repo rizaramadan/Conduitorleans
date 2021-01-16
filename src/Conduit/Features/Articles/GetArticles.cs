@@ -3,6 +3,7 @@
     using Conduit.Features.Articles.Outputs;
     using Contracts;
     using Contracts.Articles;
+    using Contracts.Favorites;
     using Contracts.Users;
     using MediatR;
     using Orleans;
@@ -11,6 +12,8 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using ArticleFunc = System.Func<GetArticlesInput, System.Threading.Tasks.Task<(System.Collections.Generic.List<Contracts.Articles.ArticleUserPair> Articles, ulong Count, Contracts.Error Error)>>;
 
     public class GetArticlesInput : IRequest<(GetArticlesOutput Output, Error Error)>
     {
@@ -33,23 +36,11 @@
             set => _offset = value;
         }
 
-        public bool AllAtricles() => 
-            string.IsNullOrWhiteSpace(Tag) 
-            && string.IsNullOrWhiteSpace(Author)
-            && string.IsNullOrWhiteSpace(Favorited)
-            && !Feed;
-
-        internal bool ExistTagOnly() =>
-            !string.IsNullOrWhiteSpace(Tag)
-            && string.IsNullOrWhiteSpace(Author)
-            && string.IsNullOrWhiteSpace(Favorited)
-            && !Feed;
     }
 
     public class GetArticlesHandler : IRequestHandler<GetArticlesInput, 
                                       (GetArticlesOutput Output, Error Error)>
     {
-        
         private static readonly Func<ArticleUserPair, GetArticleOutput> _converter = x =>
         {
             var output = new GetArticleOutput
@@ -68,13 +59,26 @@
             return output;
         };
 
+        private static readonly int ArticleListTypeCount = Enum.GetNames(typeof(ArticlesListType)).Length;
         private readonly IClusterClient _client;
         private readonly IUserService _userService;
+        private readonly IArticleService _articleService;
+        private readonly Dictionary<ArticlesListType, ArticleFunc> FuncMap;
 
-        public GetArticlesHandler(IClusterClient c, IUserService u)
+        public GetArticlesHandler(IClusterClient c, IUserService u, IArticleService a)
         {
             _client = c;
             _userService = u;
+            _articleService = a;
+            FuncMap = new Dictionary<ArticlesListType, ArticleFunc>(ArticleListTypeCount)
+            {
+                [ArticlesListType.All]       = GetAllArticles,
+                [ArticlesListType.ByTag]     = GetArticlesByTag,
+                [ArticlesListType.Authored]  = GetAuthored,
+                [ArticlesListType.Favorited] = GetFavorited,
+                [ArticlesListType.Feed]      = GetFeed
+            };
+
         }
 
         public async Task<(GetArticlesOutput Output, Error Error)> 
@@ -82,14 +86,8 @@
         {
             try
             {
-                (List<ArticleUserPair> Articles, ulong Count, Error Error) result =
-                req.AllAtricles() ?
-                    await GetAllArticles(req.Limit.Value, req.Offset.Value)
-                    : req.ExistTagOnly() ?
-                        await GetArticlesByTag(req)
-                        : req.Feed ?
-                            await GetFeed(req.Limit.Value, req.Offset.Value)
-                            : (null, 0, Error.None);
+                var type = _articleService.GetListType(req);
+                (List<ArticleUserPair> Articles, ulong Count, Error Error) result = await FuncMap[type](req);
 
                 if (result.Error.Exist())
                 {
@@ -112,32 +110,48 @@
             }
         }
 
-        
-
         private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> 
-            GetAllArticles(int limit, int offset)
+            GetAllArticles(GetArticlesInput i)
         {
             var grains = _client.GetGrain<IArticlesGrain>(0);
             var username = _userService.GetCurrentUsername();
-            var result = await grains.GetHomeGuestArticles(username, limit, offset);
+            var result = await grains.GetHomeGuestArticles(username, i.Limit.Value, i.Offset.Value);
             return result;
         }
 
         private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
             GetArticlesByTag(GetArticlesInput req)
         {
-            var grains = _client.GetGrain<ITagArticlesGrain>(req.Tag);
             var username = _userService.GetCurrentUsername();
+            var grains = _client.GetGrain<ITagArticlesGrain>(req.Tag);
             var result = await grains.GetArticlesByTag(username, req.Limit.Value, req.Offset.Value);
             return result;
         }
 
         private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)> 
-            GetFeed(int limit, int offset)
+            GetFeed(GetArticlesInput i)
         {
             var username = _userService.GetCurrentUsername();
             var grains = _client.GetGrain<IFeedGrain>(username);
-            var result = await grains.Get(username, limit, offset);
+            var result = await grains.Get(username, i.Limit.Value, i.Offset.Value);
+            return result;
+        }
+
+        private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
+            GetAuthored(GetArticlesInput i)
+        {
+            var grains = _client.GetGrain<IUserArticlesGrain>(i.Author);
+            var currentUser = _userService.GetCurrentUsername();
+            var result = await grains.GetLatestArticlePair(currentUser, i.Limit.Value, i.Offset.Value);
+            return result;
+        }
+
+        private async Task<(List<ArticleUserPair> Articles, ulong Count, Error Error)>
+            GetFavorited(GetArticlesInput i)
+        {
+            var grains = _client.GetGrain<IFavoritGrain>(i.Favorited);
+            var currentUser = _userService.GetCurrentUsername();
+            var result = await grains.GetArticles(currentUser, i.Limit.Value, i.Offset.Value);
             return result;
         }
     }

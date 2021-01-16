@@ -83,11 +83,11 @@ to have this up and running, steps are as follow:
 - [x] [Get profile](https://github.com/gothinkster/realworld/tree/master/api#get-profile)
 - [x] [Follow user](https://github.com/gothinkster/realworld/tree/master/api#follow-user)
 - [x] [Unfollow user](https://github.com/gothinkster/realworld/tree/master/api#unfollow-user)
-- [ ] [List articles](https://github.com/gothinkster/realworld/tree/master/api#list-articles)
+- [x] [List articles](https://github.com/gothinkster/realworld/tree/master/api#list-articles). With some caveat.
     - [x] all articles
     - [x] article by tag    
-    - [ ] favorited
-    - [ ] by author
+    - [x] favorited. Tested only using [run-api-tests.sh](https://github.com/gothinkster/realworld/blob/master/api/run-api-tests.sh), untested the functionality
+    - [x] by author. Tested only using [run-api-tests.sh](https://github.com/gothinkster/realworld/blob/master/api/run-api-tests.sh), untested the functionality
 - [x] [Feed articles](https://github.com/gothinkster/realworld/tree/master/api#feed-articles)
 - [x] [Get article](https://github.com/gothinkster/realworld/tree/master/api#get-article)
 - [x] [Create article](https://github.com/gothinkster/realworld/tree/master/api#create-article)
