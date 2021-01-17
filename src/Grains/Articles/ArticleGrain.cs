@@ -101,6 +101,7 @@
             {
                 _article.State.Description = description;
             }
+            _article.State.UpdatedAt = DateTime.Now;
             await _article.WriteStateAsync();
             return Error.None;
         }

@@ -5,7 +5,7 @@
 
     public interface ICommentGrain : IGrainWithIntegerCompoundKey
     {
-        Task<(Comment Comment, Error Error)> Get();
+        Task<(Comment Comment, Error Error)> Get(string username);
         Task<Error> Set(Comment comment);
     }
 }

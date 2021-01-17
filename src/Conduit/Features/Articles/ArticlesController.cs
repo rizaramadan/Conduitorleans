@@ -12,6 +12,9 @@
     using MediatR;
     using Conduit.Features.Articles.Favorites;
     using System.Collections.Generic;
+    using Contracts.Comments;
+    using System;
+    using Conduit.Features.Articles.Comments;
 
     [Route("[controller]")]
     [ApiController]
@@ -138,6 +141,46 @@
                 return UnprocessableEntity(Error);
             }
             return Ok(Output);
+        }
+
+        [Authorize]
+        [HttpPost("{slug}/comments")]
+        public async Task<IActionResult> Comments([FromRoute] string slug, [FromBody] CommentWrapper c)
+        {
+            (Comment Comment, Error Error) = await _mediator.Send(new CreateComment(slug, c.Comment));
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+
+            return Ok(new { Comment = Comment });
+        }
+
+        [Authorize]
+        [HttpGet("{slug}/comments")]
+        public async Task<IActionResult> Comments([FromRoute] string slug)
+        {
+            (List<Comment> Comments, Error Error) = await (_client.GetGrain<ICommentsGrain>(slug)).Get(_userService.GetCurrentUsername(), slug);
+            if (Error.Exist())
+            {
+                return UnprocessableEntity(Error);
+            }
+
+            return Ok(new { Comments = Comments });
+        }
+
+
+        [Authorize]
+        [HttpDelete("{slug}/comments/{id}")]
+        public async Task<IActionResult> DeleteComment([FromRoute] string slug, [FromRoute] long id)
+        {
+            var error = await (_client.GetGrain<ICommentsGrain>(slug)).RemoveComment(_userService.GetCurrentUsername(),id, slug);
+            if (error.Exist())
+            {
+                return UnprocessableEntity(error);
+            }
+
+            return Ok();
         }
     }
 }

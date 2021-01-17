@@ -2,22 +2,57 @@
 {
     using Contracts;
     using Contracts.Comments;
+    using Contracts.Follows;
+    using Contracts.Users;
     using Orleans;
+    using Orleans.Runtime;
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
 
+    using PersistenceState = Orleans.Runtime.IPersistentState<Contracts.Comments.Comment>;
+
     public class CommentGrain : Grain, ICommentGrain
     {
-        public Task<(Comment Comment, Error Error)> Get()
+        private readonly PersistenceState _comment;
+        private readonly IGrainFactory _factory;
+
+        public CommentGrain(
+            [PersistentState(nameof(CommentGrain), Constants.GrainStorage)] PersistenceState s,
+            IGrainFactory f
+        )
         {
-            throw new NotImplementedException();
+            _comment = s;
+            _factory = f;
         }
 
-        public Task<Error> Set(Comment comment)
+        public async Task<(Comment Comment, Error Error)> Get(string username)
         {
-            throw new NotImplementedException();
+            var userGrain = _factory.GetGrain<IUserGrain>(_comment.State.Author.Username);
+            (User User, Error Error) = await userGrain.Get();
+            if (Error.Exist()) 
+            {
+                return (null, Error);
+            }
+
+            var result = _comment.State;
+            var following = _factory.GetGrain<IUserFollowingGrain>(username);
+            result.Author = new Profile
+            {
+                Username = User.Username,
+                Bio = User.Bio,
+                Following = await following.IsFollow(User.Username),
+                Image = User.Image
+            };
+            return (result, Error.None);
+        }
+
+        public async Task<Error> Set(Comment comment)
+        {
+            _comment.State = comment;
+            await _comment.WriteStateAsync();
+            return Error.None;
         }
     }
 }
