@@ -28,7 +28,7 @@
         private readonly IPersistentState<User> _userState;
         private readonly IGrainFactory _factory;
 
-        public UserGrain(
+        public UserGrain(   
             [PersistentState("UserGrain", Constants.GrainStorage)] IPersistentState<User> s,
             IGrainFactory f
         )
@@ -70,7 +70,6 @@
                 await _userState.WriteStateAsync();
                 var emailUserGrain = _factory.GetGrain<IEmailUserGrain>(_userState.State.Email);
                 await emailUserGrain.SetUsername(this.GetPrimaryKeyString());
-                
                 return Error.None;
             }
             catch (Exception ex)
