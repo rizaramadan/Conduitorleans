@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Conduit\Conduit.csproj" />
+    <ProjectReference Include="..\..\src\Conduit\Conduit.csproj" />
   </ItemGroup>
 
 </Project>

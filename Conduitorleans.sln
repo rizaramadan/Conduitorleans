@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains.Tests", "test\Grains
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E76FE618-63DF-49AC-906F-E5A889AE74FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conduit.Tests", "src\Conduit.Tests\Conduit.Tests.csproj", "{82A21AB8-CF2E-4ECB-8517-3F66008DA2E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conduit.Tests", "test\Conduit.Tests\Conduit.Tests.csproj", "{82A21AB8-CF2E-4ECB-8517-3F66008DA2E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
