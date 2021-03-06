@@ -156,7 +156,6 @@
             return Ok(new { Comment = Comment });
         }
 
-        [Authorize]
         [HttpGet("{slug}/comments")]
         public async Task<IActionResult> Comments([FromRoute] string slug)
         {
