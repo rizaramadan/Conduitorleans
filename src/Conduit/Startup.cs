@@ -23,7 +23,7 @@ namespace Conduit
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddOrleansClusterClient();
+            //services.AddOrleansClusterClient();
             services.AddJwt();
             services.AddWebApiInfrastructure();
             services.AddSwaggerGen(c =>
