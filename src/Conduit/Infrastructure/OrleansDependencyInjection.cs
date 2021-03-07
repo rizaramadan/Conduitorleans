@@ -19,7 +19,7 @@ namespace Conduit.Infrastructure
             service.AddSingleton(client);
         }
 
-        private static IClusterClient ConnectClient()
+        private static IGrainFactory ConnectClient()
         {
             IClusterClient client;
             client = new ClientBuilder()

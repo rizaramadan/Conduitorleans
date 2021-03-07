@@ -15,8 +15,8 @@
     [Produces("application/json")]
     public class TagsController : ControllerBase
     {
-        private readonly IClusterClient _client;
-        public TagsController(IClusterClient c) => _client = c;
+        private readonly IGrainFactory _client;
+        public TagsController(IGrainFactory c) => _client = c;
 
         [HttpGet]
         public async Task<IActionResult> Get() 

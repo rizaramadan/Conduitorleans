@@ -41,9 +41,9 @@
     {
         private const string KeyFormat = "yyyyMMddHHmmss";
 
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IUserService _userService;
-        public CreateArticlesHandler(IClusterClient c, IUserService u)
+        public CreateArticlesHandler(IGrainFactory c, IUserService u)
         {
             _client = c;
             _userService = u;

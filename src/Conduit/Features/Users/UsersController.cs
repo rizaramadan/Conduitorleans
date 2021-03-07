@@ -21,12 +21,12 @@ namespace Conduit.Features.Users
     [Produces("application/json")]
     public class UsersController : ControllerBase
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IJwtTokenGenerator _tokenGenerator;
         private readonly IUserService _userService;
         private readonly IMediator _mediator;
 
-        public UsersController(IClusterClient c, IJwtTokenGenerator g, IUserService s, IMediator m)
+        public UsersController(IGrainFactory c, IJwtTokenGenerator g, IUserService s, IMediator m)
         {
             _client = c;
             _tokenGenerator = g;

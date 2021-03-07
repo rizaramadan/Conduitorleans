@@ -1,15 +1,23 @@
-using Conduit.Infrastructure;
-using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
+
 
 namespace Conduit
 {
+    using Conduit.Infrastructure;
+    using Grains.Users;
+    using MediatR;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.OpenApi.Models;
+    using Orleans;
+    using Orleans.Configuration;
+    using Orleans.Hosting;
+    using System;
+    using System.Reflection;
+    using HostBuilderCtx = Microsoft.Extensions.Hosting.HostBuilderContext;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -55,6 +63,42 @@ namespace Conduit
             {
                 endpoints.MapControllers();
             });
+        }
+
+        public static Action<HostBuilderCtx, ISiloBuilder> ConfigureOrleans(IConfiguration config)
+        {
+            var oconf = config.GetSection(nameof(Orleans));
+            var pgConn = config.GetConnectionString("pg");
+            return (ctx, siloBuilder) =>
+            {
+                siloBuilder.Configure((Action<ClusterOptions>)(o =>
+                {
+                    o.ClusterId = oconf.GetValue<string>(nameof(o.ClusterId));
+                    o.ServiceId = oconf.GetValue<string>(nameof(o.ServiceId));
+                }));
+
+                siloBuilder.UseAdoNetClustering(o =>
+                {
+                    o.Invariant = oconf.GetValue<string>(nameof(o.Invariant));
+                    o.ConnectionString = pgConn;
+                });
+                siloBuilder.AddAdoNetGrainStorage(oconf.GetValue<string>("AddAdoNetGrainStorage"), o =>
+                {
+                    o.Invariant = oconf.GetValue<string>(nameof(o.Invariant));
+                    o.ConnectionString = pgConn;
+                    o.UseJsonFormat = true;
+                });
+                siloBuilder.ConfigureApplicationParts
+                (
+                    parts => parts.AddApplicationPart(typeof(UserGrain).Assembly).WithReferences()
+                );
+                siloBuilder.ConfigureEndpoints
+                (
+                    siloPort: oconf.GetValue<int>("SiloPort"),
+                    gatewayPort: oconf.GetValue<int>("GatewayPort"),
+                    listenOnAnyHostAddress: true
+                );
+            };
         }
     }
 }

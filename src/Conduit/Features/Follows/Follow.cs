@@ -20,7 +20,7 @@ namespace Conduit.Features.Follows
 
     public class FollowHandler : BaseFollow, IRequestHandler<Follow, (Profile Profile, Error Error)>
     {
-        public FollowHandler(IClusterClient c, IUserService u) : base(c, u) { }
+        public FollowHandler(IGrainFactory c, IUserService u) : base(c, u) { }
 
         public async Task<(Profile Profile, Error Error)> Handle(Follow req, CancellationToken ct)
         {

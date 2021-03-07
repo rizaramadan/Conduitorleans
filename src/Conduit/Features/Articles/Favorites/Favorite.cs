@@ -17,7 +17,7 @@ namespace Conduit.Features.Articles.Favorites
 
     public class FavoriteHandler : BaseHandler, IRequestHandler<Favorite, (Article Article, Error Error)>
     {
-        public FavoriteHandler(IClusterClient c, IUserService u): base(c, u) { }
+        public FavoriteHandler(IGrainFactory c, IUserService u): base(c, u) { }
 
         public async Task<(Article Article, Error Error)> Handle(Favorite req, CancellationToken ct)
         {

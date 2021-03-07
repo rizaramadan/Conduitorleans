@@ -36,11 +36,11 @@
     public class RegisterWrapperHandler :
         IRequestHandler<RegisterWrapper, (RegisterUserOutput Output, Error Error)>
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IJwtTokenGenerator _tokenGenerator;
         private readonly IUserService _userService;
 
-        public RegisterWrapperHandler(IClusterClient c, IJwtTokenGenerator g, IUserService s)
+        public RegisterWrapperHandler(IGrainFactory c, IJwtTokenGenerator g, IUserService s)
         {
             _client = c;
             _tokenGenerator = g;

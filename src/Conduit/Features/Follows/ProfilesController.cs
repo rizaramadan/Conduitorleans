@@ -14,10 +14,10 @@
     [Produces("application/json")]
     public class ProfilesController : ControllerBase
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IMediator _mediator;
 
-        public ProfilesController(IClusterClient c, IMediator m) 
+        public ProfilesController(IGrainFactory c, IMediator m) 
         {
             _client = c;
             _mediator = m;

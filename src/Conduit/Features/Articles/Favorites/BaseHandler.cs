@@ -10,9 +10,9 @@ namespace Conduit.Features.Articles.Favorites
 {
     public abstract class BaseHandler 
     {
-        protected readonly IClusterClient _client;
+        protected readonly IGrainFactory _client;
         protected readonly IUserService _userService;
-        public BaseHandler(IClusterClient c, IUserService u) 
+        public BaseHandler(IGrainFactory c, IUserService u) 
         {
             _client = c;
             _userService = u;

@@ -60,12 +60,12 @@
         };
 
         private static readonly int ArticleListTypeCount = Enum.GetNames(typeof(ArticlesListType)).Length;
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IUserService _userService;
         private readonly IArticleService _articleService;
         private readonly Dictionary<ArticlesListType, ArticleFunc> FuncMap;
 
-        public GetArticlesHandler(IClusterClient c, IUserService u, IArticleService a)
+        public GetArticlesHandler(IGrainFactory c, IUserService u, IArticleService a)
         {
             _client = c;
             _userService = u;

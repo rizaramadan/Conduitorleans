@@ -16,10 +16,10 @@
 
     public class GetUserHandler : IRequestHandler<GetUser, (GetCurrentUserOutput, Error Error)>
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IJwtTokenGenerator _tokenGenerator;
         private readonly IUserService _userService;
-        public GetUserHandler(IClusterClient c, IJwtTokenGenerator g, IUserService s)
+        public GetUserHandler(IGrainFactory c, IJwtTokenGenerator g, IUserService s)
         {
             _client = c;
             _tokenGenerator = g;

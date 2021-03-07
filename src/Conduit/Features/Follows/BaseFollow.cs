@@ -12,9 +12,9 @@
 
     public abstract class BaseFollow
     {
-        protected readonly IClusterClient _client;
+        protected readonly IGrainFactory _client;
         protected readonly IUserService _userService;
-        public BaseFollow(IClusterClient c, IUserService u)
+        public BaseFollow(IGrainFactory c, IUserService u)
         {
             _client = c;
             _userService = u;

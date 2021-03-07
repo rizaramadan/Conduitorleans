@@ -5,26 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.10" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.Orleans.Client" Version="3.4.0" />
-    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="3.4.0" />
-    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.4.0">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.3" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="3.4.1" />
+    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="3.4.1" />
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Orleans.Core" Version="3.4.0" />
-    <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.4.0" />
-    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="3.4.0" />
-    <PackageReference Include="Npgsql" Version="5.0.1.1" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="3.4.1" />
+    <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.4.1" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="3.4.1" />
+    <PackageReference Include="Npgsql" Version="5.0.3" />
     <PackageReference Include="OdeToCode.AddFeatureFolders" Version="2.0.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj" />
+    <ProjectReference Include="..\Grains\Grains.csproj" />
   </ItemGroup>
 
 </Project>

@@ -21,11 +21,11 @@
     [Produces("application/json")]
     public class ArticlesController : ControllerBase
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IMediator _mediator;
         private readonly IUserService _userService;
 
-        public ArticlesController(IMediator m, IClusterClient c, IUserService u)
+        public ArticlesController(IMediator m, IGrainFactory c, IUserService u)
         {
             _mediator = m;
             _client   = c;

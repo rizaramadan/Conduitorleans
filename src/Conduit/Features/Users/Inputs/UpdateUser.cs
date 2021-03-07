@@ -15,10 +15,10 @@
     public class UpdateUserHandler :
         IRequestHandler<UpdateUserWrapper, (GetCurrentUserOutput Output, Error Error)>
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IJwtTokenGenerator _tokenGenerator;
         private readonly IUserService _userService;
-        public UpdateUserHandler(IClusterClient c, IJwtTokenGenerator g, IUserService s)
+        public UpdateUserHandler(IGrainFactory c, IJwtTokenGenerator g, IUserService s)
         {
             _client = c;
             _tokenGenerator = g;

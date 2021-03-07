@@ -44,10 +44,10 @@
 
     public class UpdateArticleWrapperHandler : IRequestHandler<UpdateArticleWrapper, (Article Article, Error Error)>
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IUserService _userService;
 
-        public UpdateArticleWrapperHandler(IMediator m, IClusterClient c, IUserService u)
+        public UpdateArticleWrapperHandler(IMediator m, IGrainFactory c, IUserService u)
         {
             _client = c;
             _userService = u;

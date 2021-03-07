@@ -39,10 +39,10 @@ namespace Conduit.Features.Articles.Comments
 
     public class CreateCommentHandler : IRequestHandler<CreateComment, (Comment Comment, Error Error)>
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IUserService _userService;
 
-        public CreateCommentHandler(IMediator m, IClusterClient c, IUserService u)
+        public CreateCommentHandler(IMediator m, IGrainFactory c, IUserService u)
         {
             _client = c;
             _userService = u;

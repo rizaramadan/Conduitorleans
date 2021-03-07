@@ -21,7 +21,7 @@
 
     public class UnfavoriteHandler : BaseHandler, IRequestHandler<Unfavorite, (Article Article, Error Error)>
     {
-        public UnfavoriteHandler(IClusterClient c, IUserService u) : base(c, u) { }
+        public UnfavoriteHandler(IGrainFactory c, IUserService u) : base(c, u) { }
 
         public async Task<(Article Article, Error Error)> Handle(Unfavorite req, CancellationToken ct)
         {

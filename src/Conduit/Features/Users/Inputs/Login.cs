@@ -36,10 +36,10 @@ namespace Conduit.Features.Users.Inputs
     public class LoginWrapperHandler : 
         IRequestHandler<LoginWrapper, (LoginUserOutput Output, Error Error)>
     {
-        private readonly IClusterClient _client;
+        private readonly IGrainFactory _client;
         private readonly IJwtTokenGenerator _tokenGenerator;
 
-        public LoginWrapperHandler(IClusterClient c, IJwtTokenGenerator g)
+        public LoginWrapperHandler(IGrainFactory c, IJwtTokenGenerator g)
         {
             _client = c;
             _tokenGenerator = g;
